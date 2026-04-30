@@ -1,5 +1,6 @@
 import { NavLink, Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { Menu } from "lucide-react";
 
 type NavItem = { label: string; to: string };
 
@@ -20,24 +21,36 @@ export const Header = ({
       <span className="text-sm font-semibold tracking-tight text-primary">{siteName}</span>
       <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{version}</span>
     </Link>
-    <nav className="flex items-center gap-0.5 font-mono text-[11px] uppercase tracking-widest overflow-x-auto">
-      {nav.map((item) => (
-        <NavLink
-          key={item.to}
-          to={item.to}
-          end={item.to === "/"}
-          className={({ isActive }) =>
-            cn(
-              "rounded-md px-3 py-1.5 transition-colors whitespace-nowrap",
-              isActive
-                ? "bg-secondary/70 text-primary"
-                : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
-            )
-          }
-        >
-          {item.label}
-        </NavLink>
-      ))}
-    </nav>
+    <div className="relative group">
+      <button
+        type="button"
+        aria-label="open menu"
+        className="grid h-9 w-9 place-items-center rounded-lg border border-border bg-secondary/60 text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
+      >
+        <Menu className="h-4 w-4" />
+      </button>
+      {/* Hover bridge so the menu doesn't close in the gap */}
+      <div className="invisible absolute right-0 top-full z-40 pt-2 opacity-0 transition-all duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+        <nav className="min-w-[180px] rounded-xl border border-border bg-card/95 p-1.5 shadow-soft backdrop-blur">
+          {nav.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.to === "/"}
+              className={({ isActive }) =>
+                cn(
+                  "block rounded-md px-3 py-2 font-mono text-[11px] uppercase tracking-widest transition-colors whitespace-nowrap",
+                  isActive
+                    ? "bg-secondary/70 text-primary"
+                    : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
+                )
+              }
+            >
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+      </div>
+    </div>
   </header>
 );
