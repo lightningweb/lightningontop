@@ -22,11 +22,15 @@ const blankGame = (): Game => ({
   category: "game",
 });
 
+const PW_KEY = "lightning.admin.pw.v1";
+
 const Admin = () => {
   const [authed, setAuthed] = useState(isAdminAuthed());
   const [pw, setPw] = useState("");
   const [error, setError] = useState("");
-  const [adminPw, setAdminPw] = useState("");
+  const [adminPw, setAdminPw] = useState(() =>
+    typeof window !== "undefined" ? sessionStorage.getItem(PW_KEY) ?? "" : ""
+  );
   const [draft, setDraft] = useState<LightningConfig>(() => getLiveConfig());
   const [savedFlash, setSavedFlash] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -43,6 +47,7 @@ const Admin = () => {
       setAdminAuthed(true);
       setAuthed(true);
       setAdminPw(pw);
+      sessionStorage.setItem(PW_KEY, pw);
       await refreshConfigFromCloud();
       setDraft(getLiveConfig());
     } else {
@@ -51,6 +56,12 @@ const Admin = () => {
   };
 
   const save = async () => {
+    if (!adminPw) {
+      setError("Session expired — please re-enter your password.");
+      setAdminAuthed(false);
+      setAuthed(false);
+      return;
+    }
     setSaving(true);
     const res = await saveConfigToCloud(adminPw, {
       siteName: draft.siteName,
@@ -193,7 +204,7 @@ export const STORAGE_KEY = "lightning.config.overrides.v1";
             <button onClick={exportConfig} className="rounded-lg border border-primary/40 px-3 py-2 font-mono text-[11px] uppercase tracking-widest text-primary transition-colors hover:bg-primary/10">
               export config
             </button>
-            <button onClick={() => { setAdminAuthed(false); setAuthed(false); }} className="rounded-lg border border-border px-3 py-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground">
+            <button onClick={() => { setAdminAuthed(false); setAuthed(false); setAdminPw(""); sessionStorage.removeItem(PW_KEY); }} className="rounded-lg border border-border px-3 py-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground">
               lock
             </button>
             <button onClick={save} disabled={!dirty || saving} className="rounded-lg bg-primary px-4 py-2 font-mono text-[11px] uppercase tracking-widest text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-40">
