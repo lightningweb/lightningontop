@@ -333,9 +333,7 @@ export const STORAGE_KEY = "lightning.config.overrides.v1";
           </section>
 
           <p className="px-2 pb-12 font-mono text-[11px] leading-relaxed text-muted-foreground/70">
-            note · admin changes save to your browser. for <span className="text-primary">permanent</span> edits, click{" "}
-            <span className="text-primary">export config</span> and replace{" "}
-            <span className="text-primary">src/config/lightning.config.ts</span> in your repo, then commit.
+            note · saving writes directly to <span className="text-primary">lovable cloud</span>. all visitors see your changes immediately. no re-deploy needed.
           </p>
         </div>
       </div>
