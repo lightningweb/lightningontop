@@ -1,7 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { config as baseConfig, type Game, type LightningConfig } from "@/config/lightning.config";
-import { clearOverrides, getLiveConfig, isAdminAuthed, saveOverrides, setAdminAuthed } from "@/lib/lightning";
+import { type Game, type LightningConfig } from "@/config/lightning.config";
+import {
+  clearOverrides,
+  getLiveConfig,
+  isAdminAuthed,
+  saveConfigToCloud,
+  setAdminAuthed,
+  verifyAdminPassword,
+  refreshConfigFromCloud,
+} from "@/lib/lightning";
 import { Header } from "@/components/lightning/Header";
 
 const blankGame = (): Game => ({
@@ -18,26 +26,33 @@ const Admin = () => {
   const [authed, setAuthed] = useState(isAdminAuthed());
   const [pw, setPw] = useState("");
   const [error, setError] = useState("");
+  const [adminPw, setAdminPw] = useState("");
   const [draft, setDraft] = useState<LightningConfig>(() => getLiveConfig());
   const [savedFlash, setSavedFlash] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => { document.title = "admin · lightning"; }, []);
 
   const dirty = useMemo(() => JSON.stringify(draft) !== JSON.stringify(getLiveConfig()), [draft]);
 
-  const tryLogin = (e: React.FormEvent) => {
+  const tryLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (pw === baseConfig.adminPassword || pw === draft.adminPassword) {
+    setError("");
+    const ok = await verifyAdminPassword(pw);
+    if (ok) {
       setAdminAuthed(true);
       setAuthed(true);
-      setError("");
+      setAdminPw(pw);
+      await refreshConfigFromCloud();
+      setDraft(getLiveConfig());
     } else {
       setError("Wrong password.");
     }
   };
 
-  const save = () => {
-    saveOverrides({
+  const save = async () => {
+    setSaving(true);
+    const res = await saveConfigToCloud(adminPw, {
       siteName: draft.siteName,
       tagline: draft.tagline,
       version: draft.version,
@@ -45,9 +60,14 @@ const Admin = () => {
       games: draft.games,
       quotes: draft.quotes,
       footerLink: draft.footerLink,
-      adminPassword: draft.adminPassword,
       nav: draft.nav,
     });
+    setSaving(false);
+    if (!res.ok) {
+      setError(res.error ?? "Save failed.");
+      return;
+    }
+    setError("");
     setSavedFlash(true);
     setTimeout(() => setSavedFlash(false), 1500);
   };
@@ -66,7 +86,6 @@ const Admin = () => {
         version: draft.version,
         maintenanceMode: draft.maintenanceMode,
         footerLink: draft.footerLink,
-        adminPassword: draft.adminPassword,
         nav: draft.nav,
         games: draft.games,
         quotes: draft.quotes,
@@ -145,7 +164,7 @@ export const STORAGE_KEY = "lightning.config.overrides.v1";
             unlock
           </button>
           <p className="mt-4 text-center font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60">
-            default password: <span className="text-foreground">lightning</span>
+            password is set in lovable cloud secrets
           </p>
           <Link to="/" className="mt-6 block text-center font-mono text-[11px] uppercase tracking-widest text-muted-foreground hover:text-foreground">← back</Link>
         </form>
@@ -177,11 +196,16 @@ export const STORAGE_KEY = "lightning.config.overrides.v1";
             <button onClick={() => { setAdminAuthed(false); setAuthed(false); }} className="rounded-lg border border-border px-3 py-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground">
               lock
             </button>
-            <button onClick={save} disabled={!dirty} className="rounded-lg bg-primary px-4 py-2 font-mono text-[11px] uppercase tracking-widest text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-40">
-              {savedFlash ? "saved ✓" : "save"}
+            <button onClick={save} disabled={!dirty || saving} className="rounded-lg bg-primary px-4 py-2 font-mono text-[11px] uppercase tracking-widest text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-40">
+              {saving ? "saving…" : savedFlash ? "saved ✓" : "save"}
             </button>
           </div>
         </div>
+        {error && (
+          <div className="mb-4 rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 font-mono text-xs text-destructive">
+            {error}
+          </div>
+        )}
 
         <div className="space-y-6">
           {/* Settings */}
@@ -199,16 +223,6 @@ export const STORAGE_KEY = "lightning.config.overrides.v1";
               <div className="md:col-span-2">
                 <label className={labelCls}>tagline</label>
                 <input className={inputCls} value={draft.tagline} onChange={(e) => setDraft({ ...draft, tagline: e.target.value })} />
-              </div>
-              <div className="md:col-span-2">
-                <label className={labelCls}>admin password</label>
-                <input
-                  type="text"
-                  className={`${inputCls} font-mono`}
-                  value={draft.adminPassword}
-                  onChange={(e) => setDraft({ ...draft, adminPassword: e.target.value })}
-                />
-                <p className="mt-1 font-mono text-[10px] text-muted-foreground/70">click save to apply. soft-gate only — not real security.</p>
               </div>
             </div>
 
@@ -319,9 +333,7 @@ export const STORAGE_KEY = "lightning.config.overrides.v1";
           </section>
 
           <p className="px-2 pb-12 font-mono text-[11px] leading-relaxed text-muted-foreground/70">
-            note · admin changes save to your browser. for <span className="text-primary">permanent</span> edits, click{" "}
-            <span className="text-primary">export config</span> and replace{" "}
-            <span className="text-primary">src/config/lightning.config.ts</span> in your repo, then commit.
+            note · saving writes directly to <span className="text-primary">lovable cloud</span>. all visitors see your changes immediately. no re-deploy needed.
           </p>
         </div>
       </div>
