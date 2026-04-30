@@ -18,18 +18,20 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-topo">
       <div className="mx-auto max-w-6xl px-6 py-8 md:py-10">
-        <Header siteName={config.siteName} version={config.version} />
+        <Header siteName={config.siteName} version={config.version} nav={config.nav} />
 
         <main>
           {/* Hero */}
           <section className="pt-16 md:pt-20 pb-12 text-center">
             <Clock />
             <h1 className="mt-10 text-6xl md:text-8xl font-bold tracking-tighter text-balance">
-              <span className="bg-gradient-to-b from-foreground to-foreground/40 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-b from-primary to-primary/50 bg-clip-text text-transparent">
                 {config.siteName}
               </span>
             </h1>
-            <p className="mt-4 text-base md:text-lg text-muted-foreground">{config.tagline}</p>
+            <div className="mt-5">
+              <QuoteRotator quotes={config.quotes} variant="inline" />
+            </div>
           </section>
 
           {/* Game grid */}
@@ -55,9 +57,11 @@ const Index = () => {
             )}
           </section>
 
-          {/* Quote */}
-          <section className="mt-20">
-            <QuoteRotator quotes={config.quotes} />
+          {/* Tagline */}
+          <section className="mt-16 text-center">
+            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground/70">
+              {config.tagline}
+            </p>
           </section>
         </main>
 
