@@ -16,6 +16,11 @@ export type Game = {
   tag?: string;
   /** Open in a new tab. Defaults to true for external URLs. */
   external?: boolean;
+  /** Optional background color for the tile. Accepts any CSS color (hex, hsl, etc).
+   *  If omitted, a color is auto-picked from the palette below. */
+  color?: string;
+  /** Optional background image URL for the tile. Overrides color when set. */
+  image?: string;
 };
 
 export type LightningConfig = {
@@ -58,6 +63,7 @@ export const config: LightningConfig = {
       icon: "🐍",
       url: "#",
       tag: "arcade",
+      color: "#86efac",
     },
     {
       id: "2048",
@@ -66,6 +72,7 @@ export const config: LightningConfig = {
       icon: "🔢",
       url: "#",
       tag: "puzzle",
+      color: "#fca5a5",
     },
     {
       id: "tetris",
@@ -74,6 +81,7 @@ export const config: LightningConfig = {
       icon: "🟦",
       url: "#",
       tag: "arcade",
+      color: "#93c5fd",
     },
     {
       id: "minesweeper",
@@ -82,6 +90,7 @@ export const config: LightningConfig = {
       icon: "💣",
       url: "#",
       tag: "puzzle",
+      color: "#f9a8d4",
     },
     {
       id: "pong",
@@ -90,6 +99,7 @@ export const config: LightningConfig = {
       icon: "🏓",
       url: "#",
       tag: "arcade",
+      color: "#fcd34d",
     },
     {
       id: "notes",
@@ -98,6 +108,7 @@ export const config: LightningConfig = {
       icon: "📝",
       url: "#",
       tag: "tool",
+      color: "#c4b5fd",
     },
   ],
 
