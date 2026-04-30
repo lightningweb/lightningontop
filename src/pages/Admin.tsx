@@ -22,11 +22,15 @@ const blankGame = (): Game => ({
   category: "game",
 });
 
+const PW_KEY = "lightning.admin.pw.v1";
+
 const Admin = () => {
   const [authed, setAuthed] = useState(isAdminAuthed());
   const [pw, setPw] = useState("");
   const [error, setError] = useState("");
-  const [adminPw, setAdminPw] = useState("");
+  const [adminPw, setAdminPw] = useState(() =>
+    typeof window !== "undefined" ? sessionStorage.getItem(PW_KEY) ?? "" : ""
+  );
   const [draft, setDraft] = useState<LightningConfig>(() => getLiveConfig());
   const [savedFlash, setSavedFlash] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -43,6 +47,7 @@ const Admin = () => {
       setAdminAuthed(true);
       setAuthed(true);
       setAdminPw(pw);
+      sessionStorage.setItem(PW_KEY, pw);
       await refreshConfigFromCloud();
       setDraft(getLiveConfig());
     } else {
@@ -51,6 +56,12 @@ const Admin = () => {
   };
 
   const save = async () => {
+    if (!adminPw) {
+      setError("Session expired — please re-enter your password.");
+      setAdminAuthed(false);
+      setAuthed(false);
+      return;
+    }
     setSaving(true);
     const res = await saveConfigToCloud(adminPw, {
       siteName: draft.siteName,
