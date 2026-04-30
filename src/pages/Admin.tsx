@@ -164,7 +164,7 @@ export const STORAGE_KEY = "lightning.config.overrides.v1";
             unlock
           </button>
           <p className="mt-4 text-center font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60">
-            default password: <span className="text-foreground">lightning</span>
+            password is set in lovable cloud secrets
           </p>
           <Link to="/" className="mt-6 block text-center font-mono text-[11px] uppercase tracking-widest text-muted-foreground hover:text-foreground">← back</Link>
         </form>
@@ -196,11 +196,16 @@ export const STORAGE_KEY = "lightning.config.overrides.v1";
             <button onClick={() => { setAdminAuthed(false); setAuthed(false); }} className="rounded-lg border border-border px-3 py-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground">
               lock
             </button>
-            <button onClick={save} disabled={!dirty} className="rounded-lg bg-primary px-4 py-2 font-mono text-[11px] uppercase tracking-widest text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-40">
-              {savedFlash ? "saved ✓" : "save"}
+            <button onClick={save} disabled={!dirty || saving} className="rounded-lg bg-primary px-4 py-2 font-mono text-[11px] uppercase tracking-widest text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-40">
+              {saving ? "saving…" : savedFlash ? "saved ✓" : "save"}
             </button>
           </div>
         </div>
+        {error && (
+          <div className="mb-4 rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 font-mono text-xs text-destructive">
+            {error}
+          </div>
+        )}
 
         <div className="space-y-6">
           {/* Settings */}
@@ -218,16 +223,6 @@ export const STORAGE_KEY = "lightning.config.overrides.v1";
               <div className="md:col-span-2">
                 <label className={labelCls}>tagline</label>
                 <input className={inputCls} value={draft.tagline} onChange={(e) => setDraft({ ...draft, tagline: e.target.value })} />
-              </div>
-              <div className="md:col-span-2">
-                <label className={labelCls}>admin password</label>
-                <input
-                  type="text"
-                  className={`${inputCls} font-mono`}
-                  value={draft.adminPassword}
-                  onChange={(e) => setDraft({ ...draft, adminPassword: e.target.value })}
-                />
-                <p className="mt-1 font-mono text-[10px] text-muted-foreground/70">click save to apply. soft-gate only — not real security.</p>
               </div>
             </div>
 
