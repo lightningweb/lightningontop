@@ -8,6 +8,8 @@ import NotFound from "./pages/NotFound.tsx";
 import Admin from "./pages/Admin.tsx";
 import Maintenance from "./pages/Maintenance.tsx";
 import Games from "./pages/Games.tsx";
+import Apps from "./pages/Apps.tsx";
+import Settings from "./pages/Settings.tsx";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +22,8 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/games" element={<Games />} />
+          <Route path="/apps" element={<Apps />} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/maintenance" element={<Maintenance />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

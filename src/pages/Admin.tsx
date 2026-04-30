@@ -11,6 +11,7 @@ const blankGame = (): Game => ({
   icon: "🎮",
   url: "#",
   tag: "",
+  category: "game",
 });
 
 const Admin = () => {
@@ -44,6 +45,8 @@ const Admin = () => {
       games: draft.games,
       quotes: draft.quotes,
       footerLink: draft.footerLink,
+      adminPassword: draft.adminPassword,
+      nav: draft.nav,
     });
     setSavedFlash(true);
     setTimeout(() => setSavedFlash(false), 1500);
@@ -197,6 +200,16 @@ export const STORAGE_KEY = "lightning.config.overrides.v1";
                 <label className={labelCls}>tagline</label>
                 <input className={inputCls} value={draft.tagline} onChange={(e) => setDraft({ ...draft, tagline: e.target.value })} />
               </div>
+              <div className="md:col-span-2">
+                <label className={labelCls}>admin password</label>
+                <input
+                  type="text"
+                  className={`${inputCls} font-mono`}
+                  value={draft.adminPassword}
+                  onChange={(e) => setDraft({ ...draft, adminPassword: e.target.value })}
+                />
+                <p className="mt-1 font-mono text-[10px] text-muted-foreground/70">click save to apply. soft-gate only — not real security.</p>
+              </div>
             </div>
 
             <label className="mt-5 flex items-center justify-between rounded-lg border border-border bg-secondary/40 px-4 py-3">
@@ -246,9 +259,26 @@ export const STORAGE_KEY = "lightning.config.overrides.v1";
                       remove
                     </button>
                   </div>
-                  <div className="mt-3">
-                    <label className={labelCls}>description</label>
-                    <input className={inputCls} value={g.description} onChange={(e) => updateGame(i, { description: e.target.value })} />
+                  <div className="mt-3 grid gap-3 md:grid-cols-[1fr_1fr_140px]">
+                    <div>
+                      <label className={labelCls}>description</label>
+                      <input className={inputCls} value={g.description} onChange={(e) => updateGame(i, { description: e.target.value })} />
+                    </div>
+                    <div>
+                      <label className={labelCls}>image url</label>
+                      <input className={inputCls} value={g.image ?? ""} onChange={(e) => updateGame(i, { image: e.target.value })} />
+                    </div>
+                    <div>
+                      <label className={labelCls}>category</label>
+                      <select
+                        className={inputCls}
+                        value={g.category ?? "game"}
+                        onChange={(e) => updateGame(i, { category: e.target.value as "game" | "app" })}
+                      >
+                        <option value="game">game</option>
+                        <option value="app">app</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
               ))}

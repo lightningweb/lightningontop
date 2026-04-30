@@ -21,6 +21,8 @@ export type Game = {
   color?: string;
   /** Optional background image URL for the tile. Overrides color when set. */
   image?: string;
+  /** "game" or "app". Controls which page the card shows up on. */
+  category?: "game" | "app";
 };
 
 export type LightningConfig = {
@@ -42,8 +44,8 @@ export type LightningConfig = {
 
 export const config: LightningConfig = {
   siteName: "lightning",
-  tagline: "a fast little hub for browser games & mini apps",
-  version: "v1.0",
+  tagline: "",
+  version: "",
   maintenanceMode: false,
 
   footerLink: { label: "github", url: "https://github.com" },
@@ -52,7 +54,8 @@ export const config: LightningConfig = {
   nav: [
     { label: "home", to: "/" },
     { label: "games", to: "/games" },
-    { label: "admin", to: "/admin" },
+    { label: "apps", to: "/apps" },
+    { label: "settings", to: "/settings" },
   ],
 
   games: [
@@ -64,6 +67,8 @@ export const config: LightningConfig = {
       url: "#",
       tag: "arcade",
       color: "#86efac",
+      image: "https://images.unsplash.com/photo-1606503153255-59d8b8b1cf69?w=600",
+      category: "game",
     },
     {
       id: "2048",
@@ -73,6 +78,8 @@ export const config: LightningConfig = {
       url: "#",
       tag: "puzzle",
       color: "#fca5a5",
+      image: "https://images.unsplash.com/photo-1611996575749-79a3a250f948?w=600",
+      category: "game",
     },
     {
       id: "tetris",
@@ -82,6 +89,8 @@ export const config: LightningConfig = {
       url: "#",
       tag: "arcade",
       color: "#93c5fd",
+      image: "https://images.unsplash.com/photo-1640955014216-75201056c829?w=600",
+      category: "game",
     },
     {
       id: "minesweeper",
@@ -91,6 +100,8 @@ export const config: LightningConfig = {
       url: "#",
       tag: "puzzle",
       color: "#f9a8d4",
+      image: "https://images.unsplash.com/photo-1551103782-8ab07afd45c1?w=600",
+      category: "game",
     },
     {
       id: "pong",
@@ -100,6 +111,8 @@ export const config: LightningConfig = {
       url: "#",
       tag: "arcade",
       color: "#fcd34d",
+      image: "https://images.unsplash.com/photo-1535016120720-40c646be5580?w=600",
+      category: "game",
     },
     {
       id: "notes",
@@ -109,6 +122,8 @@ export const config: LightningConfig = {
       url: "#",
       tag: "tool",
       color: "#c4b5fd",
+      image: "https://images.unsplash.com/photo-1517842645767-c639042777db?w=600",
+      category: "app",
     },
   ],
 

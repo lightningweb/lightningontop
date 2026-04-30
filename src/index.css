@@ -149,3 +149,28 @@ All colors MUST be HSL.
   }
   .animate-quote { animation: quote-fade 500ms ease-out both; }
 }
+
+/* Light theme override (toggled from Settings page) */
+:root.theme-light {
+  --background: 45 30% 97%;
+  --foreground: 222 39% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 39% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 39% 10%;
+  --secondary: 45 20% 92%;
+  --secondary-foreground: 222 39% 10%;
+  --muted: 45 15% 90%;
+  --muted-foreground: 222 12% 40%;
+  --border: 45 15% 85%;
+  --input: 45 15% 85%;
+}
+
+/* Reduced motion (toggled from Settings page) */
+:root[data-reduced-motion="1"] *,
+:root[data-reduced-motion="1"] *::before,
+:root[data-reduced-motion="1"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}
