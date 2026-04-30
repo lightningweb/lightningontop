@@ -46,9 +46,7 @@ export const config: LightningConfig = {
 
   nav: [
     { label: "home", to: "/" },
-    { label: "about", to: "/about" },
-    { label: "projects", to: "/projects" },
-    { label: "contact", to: "/contact" },
+    { label: "games", to: "/games" },
     { label: "admin", to: "/admin" },
   ],
 
