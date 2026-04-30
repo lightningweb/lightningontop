@@ -1,7 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { config as baseConfig, type Game, type LightningConfig } from "@/config/lightning.config";
-import { clearOverrides, getLiveConfig, isAdminAuthed, saveOverrides, setAdminAuthed } from "@/lib/lightning";
+import { type Game, type LightningConfig } from "@/config/lightning.config";
+import {
+  clearOverrides,
+  getLiveConfig,
+  isAdminAuthed,
+  saveConfigToCloud,
+  setAdminAuthed,
+  verifyAdminPassword,
+  refreshConfigFromCloud,
+} from "@/lib/lightning";
 import { Header } from "@/components/lightning/Header";
 
 const blankGame = (): Game => ({
@@ -18,26 +26,33 @@ const Admin = () => {
   const [authed, setAuthed] = useState(isAdminAuthed());
   const [pw, setPw] = useState("");
   const [error, setError] = useState("");
+  const [adminPw, setAdminPw] = useState("");
   const [draft, setDraft] = useState<LightningConfig>(() => getLiveConfig());
   const [savedFlash, setSavedFlash] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => { document.title = "admin · lightning"; }, []);
 
   const dirty = useMemo(() => JSON.stringify(draft) !== JSON.stringify(getLiveConfig()), [draft]);
 
-  const tryLogin = (e: React.FormEvent) => {
+  const tryLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (pw === baseConfig.adminPassword || pw === draft.adminPassword) {
+    setError("");
+    const ok = await verifyAdminPassword(pw);
+    if (ok) {
       setAdminAuthed(true);
       setAuthed(true);
-      setError("");
+      setAdminPw(pw);
+      await refreshConfigFromCloud();
+      setDraft(getLiveConfig());
     } else {
       setError("Wrong password.");
     }
   };
 
-  const save = () => {
-    saveOverrides({
+  const save = async () => {
+    setSaving(true);
+    const res = await saveConfigToCloud(adminPw, {
       siteName: draft.siteName,
       tagline: draft.tagline,
       version: draft.version,
@@ -45,9 +60,14 @@ const Admin = () => {
       games: draft.games,
       quotes: draft.quotes,
       footerLink: draft.footerLink,
-      adminPassword: draft.adminPassword,
       nav: draft.nav,
     });
+    setSaving(false);
+    if (!res.ok) {
+      setError(res.error ?? "Save failed.");
+      return;
+    }
+    setError("");
     setSavedFlash(true);
     setTimeout(() => setSavedFlash(false), 1500);
   };
@@ -66,7 +86,6 @@ const Admin = () => {
         version: draft.version,
         maintenanceMode: draft.maintenanceMode,
         footerLink: draft.footerLink,
-        adminPassword: draft.adminPassword,
         nav: draft.nav,
         games: draft.games,
         quotes: draft.quotes,
