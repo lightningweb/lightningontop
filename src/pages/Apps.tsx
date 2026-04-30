@@ -8,43 +8,38 @@ import { loadSettings } from "@/pages/Settings";
 import { Search } from "lucide-react";
 import type { Game } from "@/config/lightning.config";
 
-const Games = () => {
+const Apps = () => {
   const config = useMemo(() => getLiveConfig(), []);
   const [query, setQuery] = useState("");
   const [active, setActive] = useState<Game | null>(null);
   const settings = loadSettings();
 
   useEffect(() => {
-    document.title = `games · ${config.siteName}`;
+    document.title = `apps · ${config.siteName}`;
   }, [config.siteName]);
 
   if (config.maintenanceMode) return <Navigate to="/maintenance" replace />;
 
-  const games = config.games.filter((g) => g.category !== "app");
-  const filtered = games.filter((g) => {
+  const apps = config.games.filter((g) => g.category === "app");
+  const filtered = apps.filter((g) => {
     const q = query.trim().toLowerCase();
     if (!q) return true;
-    return (
-      g.name.toLowerCase().includes(q) ||
-      g.description.toLowerCase().includes(q) ||
-      (g.tag ?? "").toLowerCase().includes(q)
-    );
+    return g.name.toLowerCase().includes(q) || (g.tag ?? "").toLowerCase().includes(q);
   });
 
   return (
     <div className="min-h-screen bg-topo">
       <div className="mx-auto max-w-6xl px-6 py-8 md:py-10">
         <Header siteName={config.siteName} version={config.version} nav={config.nav} />
-
         <main className="pt-10 md:pt-14">
           <div className="mb-8 flex flex-col gap-5">
             <div>
               <div className="mb-2 font-mono text-[11px] uppercase tracking-[0.2em] text-primary">
-                ◆ {filtered.length} of {games.length}
+                ◆ {filtered.length} of {apps.length}
               </div>
               <h1 className="text-5xl md:text-6xl font-bold tracking-tighter">
                 <span className="bg-gradient-to-b from-primary to-primary/60 bg-clip-text text-transparent">
-                  games
+                  apps
                 </span>
               </h1>
             </div>
@@ -54,7 +49,7 @@ const Games = () => {
                 type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="search games..."
+                placeholder="search apps..."
                 className="w-full rounded-full border border-border bg-card/60 py-2.5 pl-10 pr-4 text-sm outline-none backdrop-blur transition-colors placeholder:text-muted-foreground focus:border-primary/50"
               />
             </div>
@@ -62,9 +57,7 @@ const Games = () => {
 
           {filtered.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-border p-12 text-center text-muted-foreground">
-              {games.length === 0
-                ? <>No games yet. Add some in <code className="font-mono text-primary">src/config/lightning.config.ts</code></>
-                : <>No games match "<span className="text-foreground">{query}</span>".</>}
+              {apps.length === 0 ? "No apps yet. Add some in admin." : <>No apps match "<span className="text-foreground">{query}</span>".</>}
             </div>
           ) : (
             <div className={`grid gap-4 ${settings.compactCards ? "grid-cols-3 sm:grid-cols-4 lg:grid-cols-6" : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"}`}>
@@ -80,4 +73,4 @@ const Games = () => {
   );
 };
 
-export default Games;
+export default Apps;
