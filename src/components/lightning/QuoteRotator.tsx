@@ -2,7 +2,15 @@ import { useEffect, useState } from "react";
 
 type Quote = { text: string; author?: string };
 
-export const QuoteRotator = ({ quotes, intervalMs = 8000 }: { quotes: Quote[]; intervalMs?: number }) => {
+export const QuoteRotator = ({
+  quotes,
+  intervalMs = 8000,
+  variant = "card",
+}: {
+  quotes: Quote[];
+  intervalMs?: number;
+  variant?: "card" | "inline";
+}) => {
   const [i, setI] = useState(() => Math.floor(Math.random() * Math.max(quotes.length, 1)));
   useEffect(() => {
     if (quotes.length < 2) return;
@@ -18,6 +26,21 @@ export const QuoteRotator = ({ quotes, intervalMs = 8000 }: { quotes: Quote[]; i
 
   if (!quotes.length) return null;
   const q = quotes[i];
+
+  if (variant === "inline") {
+    return (
+      <div key={i} className="animate-quote mx-auto max-w-2xl">
+        <p className="text-balance text-base md:text-lg italic leading-relaxed text-muted-foreground">
+          “{q.text}”
+          {q.author && (
+            <span className="ml-2 not-italic font-mono text-xs uppercase tracking-widest text-muted-foreground/70">
+              — {q.author}
+            </span>
+          )}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <section className="rounded-2xl border border-border bg-card/40 p-8 md:p-10 backdrop-blur-sm">
