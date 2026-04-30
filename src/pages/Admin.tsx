@@ -54,6 +54,66 @@ const Admin = () => {
     setDraft(getLiveConfig());
   };
 
+  /** Generate a fresh lightning.config.ts file from the current draft. */
+  const exportConfig = () => {
+    const cfgLiteral = JSON.stringify(
+      {
+        siteName: draft.siteName,
+        tagline: draft.tagline,
+        version: draft.version,
+        maintenanceMode: draft.maintenanceMode,
+        footerLink: draft.footerLink,
+        adminPassword: draft.adminPassword,
+        nav: draft.nav,
+        games: draft.games,
+        quotes: draft.quotes,
+      },
+      null,
+      2
+    );
+
+    const file = `/**
+ * ⚡ LIGHTNING — edit this file to customize your hub.
+ * Generated from /admin on ${new Date().toISOString()}.
+ * Drop this into src/config/lightning.config.ts and commit to make changes permanent.
+ */
+
+export type Game = {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  url: string;
+  tag?: string;
+  external?: boolean;
+};
+
+export type LightningConfig = {
+  siteName: string;
+  tagline: string;
+  version: string;
+  maintenanceMode: boolean;
+  footerLink?: { label: string; url: string };
+  adminPassword: string;
+  games: Game[];
+  quotes: { text: string; author?: string }[];
+  nav: { label: string; to: string }[];
+};
+
+export const config: LightningConfig = ${cfgLiteral};
+
+export const STORAGE_KEY = "lightning.config.overrides.v1";
+`;
+
+    const blob = new Blob([file], { type: "text/typescript" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "lightning.config.ts";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const updateGame = (i: number, patch: Partial<Game>) =>
     setDraft((d) => ({ ...d, games: d.games.map((g, idx) => (idx === i ? { ...g, ...patch } : g)) }));
   const removeGame = (i: number) =>
@@ -107,6 +167,9 @@ const Admin = () => {
           <div className="flex items-center gap-2">
             <button onClick={reset} className="rounded-lg border border-border px-3 py-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground">
               reset
+            </button>
+            <button onClick={exportConfig} className="rounded-lg border border-primary/40 px-3 py-2 font-mono text-[11px] uppercase tracking-widest text-primary transition-colors hover:bg-primary/10">
+              export config
             </button>
             <button onClick={() => { setAdminAuthed(false); setAuthed(false); }} className="rounded-lg border border-border px-3 py-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground">
               lock
@@ -226,7 +289,9 @@ const Admin = () => {
           </section>
 
           <p className="px-2 pb-12 font-mono text-[11px] leading-relaxed text-muted-foreground/70">
-            note · admin changes save to your browser only. for permanent edits, update <span className="text-primary">src/config/lightning.config.ts</span> directly.
+            note · admin changes save to your browser. for <span className="text-primary">permanent</span> edits, click{" "}
+            <span className="text-primary">export config</span> and replace{" "}
+            <span className="text-primary">src/config/lightning.config.ts</span> in your repo, then commit.
           </p>
         </div>
       </div>
