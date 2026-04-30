@@ -1,9 +1,8 @@
 import { useEffect, useMemo } from "react";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { getLiveConfig } from "@/lib/lightning";
 import { Header } from "@/components/lightning/Header";
 import { Clock } from "@/components/lightning/Clock";
-import { GameCard } from "@/components/lightning/GameCard";
 import { QuoteRotator } from "@/components/lightning/QuoteRotator";
 
 const Index = () => {
@@ -32,29 +31,17 @@ const Index = () => {
             <div className="mt-5">
               <QuoteRotator quotes={config.quotes} variant="inline" />
             </div>
-          </section>
-
-          {/* Game grid */}
-          <section className="pt-4">
-            <div className="mb-6 flex items-end justify-between">
-              <h2 className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-                ◆ collection · {config.games.length} apps
-              </h2>
-              <span className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground/60">
-                edit in lightning.config.ts
+            <div className="mt-10 flex items-center justify-center gap-3">
+              <Link
+                to="/games"
+                className="rounded-lg bg-primary px-5 py-2.5 font-mono text-[11px] uppercase tracking-widest text-primary-foreground transition-opacity hover:opacity-90"
+              >
+                enter the arcade →
+              </Link>
+              <span className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+                {config.games.length} apps
               </span>
             </div>
-            {config.games.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-border p-12 text-center text-muted-foreground">
-                No games yet. Add some in <code className="font-mono text-primary">src/config/lightning.config.ts</code>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {config.games.map((g, i) => (
-                  <GameCard key={g.id} game={g} index={i} />
-                ))}
-              </div>
-            )}
           </section>
 
           {/* Tagline */}
