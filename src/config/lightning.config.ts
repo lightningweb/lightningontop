@@ -58,73 +58,322 @@ export const config: LightningConfig = {
     { label: "settings", to: "/settings" },
   ],
 
-  games: [
+  games:
+  [
     {
-      id: "snake",
-      name: "Snake",
-      description: "Classic arcade. Eat. Grow. Don't bite yourself.",
-      icon: "🐍",
-      url: "#",
-      tag: "arcade",
-      color: "#86efac",
-      image: "https://images.unsplash.com/photo-1606503153255-59d8b8b1cf69?w=600",
+      id: "drive-mad",
+      name: "Drive Mad",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/drive-mad/index.html",
+      image: "https://lightningweb.github.io/games/thumbs/drive-mad.jpg",
+      category: "game"
+    },
+    {
+      id: "granny",
+      name: "Granny",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/non-folder/granny.html",
+      image: "https://lightningweb.github.io/games/thumbs/90.png",
+      category: "game"
+    },
+    {
+      id: "geoguessr",
+      name: "GeoGuessr",
+      description: "",
+      icon: "🎮",
+      url: "https://www.worldguessr.com/",
+      image: "https://lightningweb.github.io/games/thumbs/geog.jpg",
       category: "game",
+      external: true
     },
     {
-      id: "2048",
-      name: "2048",
-      description: "Slide tiles, merge numbers, hit the magic number.",
-      icon: "🔢",
-      url: "#",
-      tag: "puzzle",
-      color: "#fca5a5",
-      image: "https://images.unsplash.com/photo-1611996575749-79a3a250f948?w=600",
+      id: "gta-vice-city",
+      name: "GTA Vice City",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/vicecity/index.html",
+      image: "https://lightningweb.github.io/games/thumbs/vicecity.jpg",
+      category: "game"
+    },
+    {
+      id: "idle-breakout",
+      name: "Idle Breakout",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/idle-breakout/index.html",
+      image: "https://lightningweb.github.io/games/thumbs/idle-breakout.jpg",
+      category: "game"
+    },
+    {
+      id: "level-devil",
+      name: "Level Devil",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/level-devil/index.html",
+      image: "https://lightningweb.github.io/games/thumbs/level-devil.jpg",
+      category: "game"
+    },
+    {
+      id: "retro-bowl",
+      name: "Retro Bowl",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/retrobowl/index.html",
+      image: "https://lightningweb.github.io/games/thumbs/retrobowl.jpg",
+      category: "game"
+    },
+    {
+      id: "retro-bowl-college",
+      name: "Retro Bowl College",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/retrobowlcollege/index.html",
+      image: "https://lightningweb.github.io/games/thumbs/retrobowlcollege.jpg",
+      category: "game"
+    },
+    {
+      id: "slope",
+      name: "Slope",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/slope/index.html",
+      image: "https://lightningweb.github.io/games/thumbs/slope.jpg",
+      category: "game"
+    },
+    {
+      id: "tanuki-sunset",
+      name: "Tanuki Sunset",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/tanuki-sunset/index.html",
+      image: "https://lightningweb.github.io/games/thumbs/tanuki-sunset.jpg",
+      category: "game"
+    },
+    {
+      id: "space-wave",
+      name: "Space Wave",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/space-wave/index.html",
+      image: "https://lightningweb.github.io/games/thumbs/space-wave.jpg",
+      category: "game"
+    },
+    {
+      id: "tunnel-rush",
+      name: "Tunnel Rush",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/tunnel-rush/index.html",
+      image: "https://lightningweb.github.io/games/thumbs/tunnel-rush.jpg",
+      category: "game"
+    },
+    {
+      id: "monkey-mart",
+      name: "Monkey Mart",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/monkey-mart/index.html",
+      image: "https://lightningweb.github.io/games/thumbs/monkey-mart.jpg",
+      category: "game"
+    },
+    {
+      id: "snow-rider",
+      name: "Snow Rider 3D",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/snow-rider/index.html",
+      image: "https://lightningweb.github.io/games/thumbs/snow-rider.jpg",
+      category: "game"
+    },
+    {
+      id: "tag",
+      name: "TAG",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/tag/index.html",
+      image: "https://lightningweb.github.io/games/thumbs/tag.jpg",
+      category: "game"
+    },
+    {
+      id: "polytrack",
+      name: "Polytrack",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/polytrack/index.html",
+      image: "https://lightningweb.github.io/games/thumbs/polytrack.jpg",
+      category: "game"
+    },
+    {
+      id: "eggy-car",
+      name: "Eggy Car",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/eggy-car/index.html",
+      image: "https://lightningweb.github.io/games/thumbs/eggy-car.jpg",
+      category: "game"
+    },
+    {
+      id: "geometry-dash",
+      name: "Geometry Dash",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/geometrydash/index.html",
+      image: "https://lightningweb.github.io/games/thumbs/geometry-dash.jpg",
+      category: "game"
+    },
+    {
+      id: "cluster-rush",
+      name: "Cluster Rush",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/cluster-rush/index.html",
+      image: "https://lightningweb.github.io/games/thumbs/cluster-rush.jpg",
+      category: "game"
+    },
+    {
+      id: "stacktris",
+      name: "Stacktris",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/stacktris/index.html",
+      image: "https://lightningweb.github.io/games/thumbs/stacktris.jpg",
+      category: "game"
+    },
+    {
+      id: "drift-boss",
+      name: "Drift Boss",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/drift-boss/index.html",
+      image: "https://lightningweb.github.io/games/thumbs/drift-boss.jpg",
+      category: "game"
+    },
+    {
+      id: "iron-lung",
+      name: "Iron Lung",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/non-folder/iron-lung.html",
+      image: "https://lightningweb.github.io/games/thumbs/iron-lung.jpg",
+      category: "game"
+    },
+    {
+      id: "tomb-of-the-mask",
+      name: "Tomb of the Mask",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/non-folder/tomb_of_the_mask.html",
+      image: "https://lightningweb.github.io/games/thumbs/totm.jpg",
+      category: "game"
+    },
+    {
+      id: "gun-spin",
+      name: "Gun Spin",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/non-folder/gun_spin.html",
+      image: "https://lightningweb.github.io/games/thumbs/gunspin.jpg",
+      category: "game"
+    },
+    {
+      id: "crazy-cattle-3d",
+      name: "Crazy Cattle 3D",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/non-folder/crazy_cattle_3d.html",
+      image: "https://lightningweb.github.io/games/thumbs/cc3d.png",
+      category: "game"
+    },
+    {
+      id: "bitlife",
+      name: "Bitlife",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/non-folder/bitlife.html",
+      image: "https://lightningweb.github.io/games/thumbs/bitlife.jpg",
+      category: "game"
+    },
+    {
+      id: "hollow-knight",
+      name: "Hollow Knight",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/non-folder/hollow-knight.html",
+      image: "https://lightningweb.github.io/games/thumbs/hollowknight.jpg",
       category: "game",
+      tag: "new"
     },
     {
-      id: "tetris",
-      name: "Tetris",
-      description: "Stack the falling blocks. Clear the lines. Repeat.",
-      icon: "🟦",
-      url: "#",
-      tag: "arcade",
-      color: "#93c5fd",
-      image: "https://images.unsplash.com/photo-1640955014216-75201056c829?w=600",
+      id: "fnf",
+      name: "Friday Night Funkin'",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/non-folder/fnf.html",
+      image: "https://lightningweb.github.io/games/thumbs/fnf.png",
       category: "game",
+      tag: "new"
     },
     {
-      id: "minesweeper",
-      name: "Minesweeper",
-      description: "Logic puzzle on a hidden grid. Don't click the bomb.",
-      icon: "💣",
-      url: "#",
-      tag: "puzzle",
-      color: "#f9a8d4",
-      image: "https://images.unsplash.com/photo-1551103782-8ab07afd45c1?w=600",
+      id: "balatro",
+      name: "Balatro",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/non-folder/balatro.html",
+      image: "https://lightningweb.github.io/games/thumbs/balatro.jpg",
+      category: "game"
+    },
+    {
+      id: "gladihoppers",
+      name: "Gladihoppers",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/non-folder/gladdihoppers.html",
+      image: "https://lightningweb.github.io/games/thumbs/gladihoppers.jpg",
+      category: "game"
+    },
+    {
+      id: "ultrakill",
+      name: "ULTRAKILL",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/ultrakill/index.html",
+      image: "https://lightningweb.github.io/games/thumbs/ultrakill.jpg",
       category: "game",
+      tag: "new"
     },
     {
-      id: "pong",
-      name: "Pong",
-      description: "The original. Two paddles, one ball, infinite vibes.",
-      icon: "🏓",
-      url: "#",
-      tag: "arcade",
-      color: "#fcd34d",
-      image: "https://images.unsplash.com/photo-1535016120720-40c646be5580?w=600",
+      id: "minecraft",
+      name: "Minecraft",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/non-folder/wasm-gc%201.20.html",
+      image: "https://lightningweb.github.io/games/thumbs/minecraft.png",
       category: "game",
+      tag: "new"
     },
     {
-      id: "notes",
-      name: "Quick Notes",
-      description: "Tiny scratchpad that saves to local storage.",
-      icon: "📝",
-      url: "#",
-      tag: "tool",
-      color: "#c4b5fd",
-      image: "https://images.unsplash.com/photo-1517842645767-c639042777db?w=600",
-      category: "app",
+      id: "roblox",
+      name: "Roblox",
+      description: "",
+      icon: "🎮",
+      url: "https://nowgg.fun/apps/a/19900/b.html",
+      image: "https://lightningweb.github.io/games/thumbs/IMG_0376.png",
+      category: "game",
+      tag: "new",
+      external: true
     },
+    {
+      id: "tomodachi-collection",
+      name: "Tomodachi Collection",
+      description: "",
+      icon: "🎮",
+      url: "https://lightningweb.github.io/games/files/non-folder/tomodachi-collection.html",
+      image: "https://lightningweb.github.io/games/thumbs/tomodachi-collection.webp",
+      category: "game",
+      tag: "new"
+    }
   ],
 
   quotes: [
