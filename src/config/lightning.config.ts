@@ -31,6 +31,8 @@ export type LightningConfig = {
   adminPassword: string;
   games: Game[];
   quotes: { text: string; author?: string }[];
+  /** Top nav links. Add/remove freely. */
+  nav: { label: string; to: string }[];
 };
 
 export const config: LightningConfig = {
@@ -41,6 +43,14 @@ export const config: LightningConfig = {
 
   footerLink: { label: "github", url: "https://github.com" },
   adminPassword: "lightning",
+
+  nav: [
+    { label: "home", to: "/" },
+    { label: "about", to: "/about" },
+    { label: "projects", to: "/projects" },
+    { label: "contact", to: "/contact" },
+    { label: "admin", to: "/admin" },
+  ],
 
   games: [
     {
