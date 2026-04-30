@@ -26,7 +26,6 @@ export const GameFrame = ({ game, onClose }: { game: Game; onClose: () => void }
     <div className="fixed inset-0 z-50 flex flex-col bg-background/95 backdrop-blur-md animate-fade-in-up">
       <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
         <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
-          <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse-glow" />
           {game.name}
         </div>
         <div className="flex items-center gap-2">
