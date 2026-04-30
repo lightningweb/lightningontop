@@ -43,17 +43,6 @@ export const GameCard = ({
         >
           {game.name}
         </h3>
-        {game.tag && (
-          <span
-            className={
-              hasImage
-                ? "rounded-full bg-black/50 px-2 py-0.5 font-mono text-[9px] uppercase tracking-widest text-white/90 backdrop-blur"
-                : "rounded-full bg-black/15 px-2 py-0.5 font-mono text-[9px] uppercase tracking-widest text-black/70"
-            }
-          >
-            {game.tag}
-          </span>
-        )}
       </div>
     </button>
   );
