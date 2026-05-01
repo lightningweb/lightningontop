@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const Clock = () => {
   const [now, setNow] = useState(new Date());
+  const navigate = useNavigate();
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(id);
@@ -22,7 +24,14 @@ export const Clock = () => {
         <span className="ml-1 text-muted-foreground">{ampm}</span>
       </div>
       <span className="text-border">|</span>
-      <div className="text-foreground">{date}</div>
+      <button
+        type="button"
+        onClick={() => navigate("/admin")}
+        className="text-foreground cursor-default focus:outline-none"
+        aria-label="date"
+      >
+        {date}
+      </button>
     </div>
   );
 };
