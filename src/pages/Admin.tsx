@@ -11,6 +11,7 @@ import {
   refreshConfigFromCloud,
 } from "@/lib/lightning";
 import { Header } from "@/components/lightning/Header";
+import { AdminChat } from "@/components/lightning/AdminChat";
 
 const blankGame = (): Game => ({
   id: `game-${Math.random().toString(36).slice(2, 7)}`,
@@ -219,6 +220,9 @@ export const STORAGE_KEY = "lightning.config.overrides.v1";
         )}
 
         <div className="space-y-6">
+          {/* AI assistant */}
+          <AdminChat draft={draft} setDraft={setDraft} password={adminPw} />
+
           {/* Settings */}
           <section className={sectionCls}>
             <h2 className="mb-4 font-mono text-[11px] uppercase tracking-[0.2em] text-primary">◆ settings</h2>
