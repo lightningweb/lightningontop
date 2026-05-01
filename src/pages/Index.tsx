@@ -11,7 +11,7 @@ const Index = () => {
   const settings = loadSettings();
 
   useEffect(() => {
-    document.title = `${config.siteName} — personal hub`;
+    document.title = config.siteName;
   }, [config.siteName]);
 
   if (config.maintenanceMode) return <Navigate to="/maintenance" replace />;
