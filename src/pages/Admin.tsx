@@ -74,6 +74,7 @@ const Admin = () => {
       quotes: draft.quotes,
       footerLink: draft.footerLink,
       nav: draft.nav,
+      theme: draft.theme,
     });
     setSaving(false);
     if (!res.ok) {
