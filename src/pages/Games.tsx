@@ -33,7 +33,7 @@ const Games = () => {
 
   return (
     <div className="min-h-screen bg-topo">
-      <div className="mx-auto max-w-6xl px-6 py-8 md:py-10">
+      <div className="w-full px-4 md:px-10 py-8 md:py-10">
         <Header siteName={config.siteName} version={config.version} nav={config.nav} />
 
         <main className="pt-10 md:pt-14">
@@ -67,7 +67,7 @@ const Games = () => {
                 : <>No games match "<span className="text-foreground">{query}</span>".</>}
             </div>
           ) : (
-            <div className={`grid gap-4 ${settings.compactCards ? "grid-cols-3 sm:grid-cols-4 lg:grid-cols-6" : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"}`}>
+            <div className={`grid gap-4 ${settings.compactCards ? "grid-cols-3 sm:grid-cols-5 lg:grid-cols-7 xl:grid-cols-8" : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6"}`}>
               {filtered.map((g, i) => (
                 <GameCard key={g.id} game={g} index={i} onOpen={setActive} />
               ))}

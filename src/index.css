@@ -39,6 +39,9 @@ All colors MUST be HSL.
 
     --radius: 0.875rem;
 
+    --game-frame-bar: 222 30% 9%;
+    --game-frame-bg: 0 0% 0%;
+
     --surface-1: 222 32% 8%;
     --surface-2: 222 28% 11%;
     --surface-3: 222 24% 14%;
@@ -118,8 +121,14 @@ All colors MUST be HSL.
     background-attachment: fixed;
   }
 
+  /* Repurpose .font-mono so existing labels use the display font instead of monospace. */
   .font-mono {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+    letter-spacing: 0.04em;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
   }
 
   .text-balance { text-wrap: balance; }

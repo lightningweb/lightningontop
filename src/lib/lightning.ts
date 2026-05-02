@@ -1,4 +1,4 @@
-import { config as baseConfig, STORAGE_KEY, type LightningConfig } from "@/config/lightning.config";
+import { config as baseConfig, DEFAULT_THEME, STORAGE_KEY, type LightningConfig, type ThemeColors } from "@/config/lightning.config";
 import { supabase } from "@/integrations/supabase/client";
 
 const CACHE_KEY = "lightning.config.cache.v2";
@@ -15,6 +15,42 @@ export function getLiveConfig(): LightningConfig {
   } catch {
     return baseConfig;
   }
+}
+
+const CSS_VAR_MAP: Record<keyof ThemeColors, string> = {
+  background: "--background",
+  foreground: "--foreground",
+  card: "--card",
+  cardForeground: "--card-foreground",
+  primary: "--primary",
+  primaryForeground: "--primary-foreground",
+  secondary: "--secondary",
+  secondaryForeground: "--secondary-foreground",
+  muted: "--muted",
+  mutedForeground: "--muted-foreground",
+  accent: "--accent",
+  accentForeground: "--accent-foreground",
+  destructive: "--destructive",
+  destructiveForeground: "--destructive-foreground",
+  border: "--border",
+  input: "--input",
+  ring: "--ring",
+  gameFrameBar: "--game-frame-bar",
+  gameFrameBackground: "--game-frame-bg",
+};
+
+export function resolveTheme(cfg: LightningConfig): ThemeColors {
+  return { ...DEFAULT_THEME, ...(cfg.theme ?? {}) };
+}
+
+/** Write the resolved theme into CSS variables on :root. */
+export function applyTheme(cfg: LightningConfig) {
+  if (typeof document === "undefined") return;
+  const theme = resolveTheme(cfg);
+  const root = document.documentElement;
+  (Object.keys(CSS_VAR_MAP) as Array<keyof ThemeColors>).forEach((k) => {
+    root.style.setProperty(CSS_VAR_MAP[k], theme[k]);
+  });
 }
 
 /** Fetch the latest config from the cloud and update the local cache.

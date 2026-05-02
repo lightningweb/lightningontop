@@ -23,8 +23,14 @@ export const GameFrame = ({ game, onClose }: { game: Game; onClose: () => void }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-background/95 backdrop-blur-md animate-fade-in-up">
-      <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
+    <div
+      className="fixed inset-0 z-50 flex flex-col backdrop-blur-md animate-fade-in-up"
+      style={{ backgroundColor: "hsl(var(--game-frame-bg) / 0.97)" }}
+    >
+      <div
+        className="flex items-center justify-between border-b border-border px-4 py-2.5"
+        style={{ backgroundColor: "hsl(var(--game-frame-bar))" }}
+      >
         <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
           {game.name}
         </div>
@@ -45,7 +51,7 @@ export const GameFrame = ({ game, onClose }: { game: Game; onClose: () => void }
           </button>
         </div>
       </div>
-      <div ref={wrapRef} className="flex-1 bg-black">
+      <div ref={wrapRef} className="flex-1" style={{ backgroundColor: "hsl(var(--game-frame-bg))" }}>
         <iframe
           src={game.url}
           title={game.name}

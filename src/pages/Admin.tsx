@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { type Game, type LightningConfig } from "@/config/lightning.config";
+import { DEFAULT_THEME, type Game, type LightningConfig, type ThemeColors } from "@/config/lightning.config";
 import {
   clearOverrides,
   getLiveConfig,
@@ -9,9 +9,10 @@ import {
   setAdminAuthed,
   verifyAdminPassword,
   refreshConfigFromCloud,
+  applyTheme,
+  resolveTheme,
 } from "@/lib/lightning";
 import { Header } from "@/components/lightning/Header";
-import { AdminChat } from "@/components/lightning/AdminChat";
 
 const blankGame = (): Game => ({
   id: `game-${Math.random().toString(36).slice(2, 7)}`,
@@ -24,6 +25,76 @@ const blankGame = (): Game => ({
 });
 
 const PW_KEY = "lightning.admin.pw.v1";
+
+/** "222 39% 6%" -> "#0a0d14" (best-effort, for the native color picker). */
+function hslStringToHex(hsl: string): string {
+  const m = hsl.trim().match(/^(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)%\s+(\d+(?:\.\d+)?)%$/);
+  if (!m) return "#000000";
+  const h = parseFloat(m[1]) / 360;
+  const s = parseFloat(m[2]) / 100;
+  const l = parseFloat(m[3]) / 100;
+  const hue2rgb = (p: number, q: number, t: number) => {
+    if (t < 0) t += 1; if (t > 1) t -= 1;
+    if (t < 1/6) return p + (q - p) * 6 * t;
+    if (t < 1/2) return q;
+    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+    return p;
+  };
+  let r: number, g: number, b: number;
+  if (s === 0) { r = g = b = l; }
+  else {
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    r = hue2rgb(p, q, h + 1/3);
+    g = hue2rgb(p, q, h);
+    b = hue2rgb(p, q, h - 1/3);
+  }
+  const toHex = (x: number) => Math.round(x * 255).toString(16).padStart(2, "0");
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
+function hexToHslString(hex: string): string {
+  const v = hex.replace("#", "");
+  if (v.length !== 6) return "0 0% 0%";
+  const r = parseInt(v.slice(0, 2), 16) / 255;
+  const g = parseInt(v.slice(2, 4), 16) / 255;
+  const b = parseInt(v.slice(4, 6), 16) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h = 0, s = 0; const l = (max + min) / 2;
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+    h /= 6;
+  }
+  return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
+}
+
+const THEME_FIELDS: { key: keyof ThemeColors; label: string }[] = [
+  { key: "background", label: "background" },
+  { key: "foreground", label: "text" },
+  { key: "primary", label: "primary" },
+  { key: "primaryForeground", label: "primary text" },
+  { key: "card", label: "card" },
+  { key: "cardForeground", label: "card text" },
+  { key: "secondary", label: "secondary" },
+  { key: "secondaryForeground", label: "secondary text" },
+  { key: "muted", label: "muted" },
+  { key: "mutedForeground", label: "muted text" },
+  { key: "accent", label: "accent" },
+  { key: "accentForeground", label: "accent text" },
+  { key: "destructive", label: "destructive" },
+  { key: "destructiveForeground", label: "destructive text" },
+  { key: "border", label: "border" },
+  { key: "input", label: "input border" },
+  { key: "ring", label: "focus ring" },
+  { key: "gameFrameBar", label: "game player bar" },
+  { key: "gameFrameBackground", label: "game player background" },
+];
 
 const Admin = () => {
   const [authed, setAuthed] = useState(isAdminAuthed());
@@ -73,6 +144,7 @@ const Admin = () => {
       quotes: draft.quotes,
       footerLink: draft.footerLink,
       nav: draft.nav,
+      theme: draft.theme,
     });
     setSaving(false);
     if (!res.ok) {
@@ -101,6 +173,7 @@ const Admin = () => {
         nav: draft.nav,
         games: draft.games,
         quotes: draft.quotes,
+        theme: draft.theme,
       },
       null,
       2
@@ -188,9 +261,16 @@ export const STORAGE_KEY = "lightning.config.overrides.v1";
   const labelCls = "block font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-1.5";
   const sectionCls = "rounded-2xl border border-border bg-card/40 p-6 backdrop-blur";
 
+  const theme: ThemeColors = resolveTheme(draft);
+  const setThemeKey = (k: keyof ThemeColors, v: string) =>
+    setDraft({ ...draft, theme: { ...(draft.theme ?? {}), [k]: v } });
+
+  // Live preview: apply the draft theme as the user edits.
+  useEffect(() => { applyTheme(draft); }, [draft]);
+
   return (
     <div className="min-h-screen bg-topo">
-      <div className="mx-auto max-w-5xl px-6 py-8 md:py-10">
+      <div className="w-full max-w-7xl mx-auto px-6 py-8 md:py-10">
         <Header siteName={draft.siteName} version={draft.version} nav={draft.nav} />
 
         <div className="mt-10 mb-8 flex flex-wrap items-end justify-between gap-4">
@@ -220,9 +300,6 @@ export const STORAGE_KEY = "lightning.config.overrides.v1";
         )}
 
         <div className="space-y-6">
-          {/* AI assistant */}
-          <AdminChat draft={draft} setDraft={setDraft} password={adminPw} />
-
           {/* Settings */}
           <section className={sectionCls}>
             <h2 className="mb-4 font-mono text-[11px] uppercase tracking-[0.2em] text-primary">◆ settings</h2>
@@ -254,6 +331,48 @@ export const STORAGE_KEY = "lightning.config.overrides.v1";
                 <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-background transition-all ${draft.maintenanceMode ? "left-[22px]" : "left-0.5"}`} />
               </button>
             </label>
+          </section>
+
+          {/* Theme */}
+          <section className={sectionCls}>
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="font-mono text-[11px] uppercase tracking-[0.2em] text-primary">◆ theme · colors</h2>
+              <button
+                onClick={() => setDraft({ ...draft, theme: { ...DEFAULT_THEME } })}
+                className="rounded-lg border border-border px-3 py-1.5 font-mono text-[11px] uppercase tracking-widest text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground"
+              >
+                reset theme
+              </button>
+            </div>
+            <p className="mb-4 text-xs text-muted-foreground">
+              live preview as you edit. saves with the rest of the config.
+            </p>
+            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+              {THEME_FIELDS.map(({ key, label }) => {
+                const val = theme[key];
+                const hex = hslStringToHex(val);
+                return (
+                  <div key={key} className="flex items-center gap-3 rounded-lg border border-border bg-background/40 px-3 py-2">
+                    <input
+                      type="color"
+                      value={hex}
+                      onChange={(e) => setThemeKey(key, hexToHslString(e.target.value))}
+                      className="h-9 w-9 cursor-pointer rounded border border-border bg-transparent"
+                      aria-label={label}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{label}</div>
+                      <input
+                        value={val}
+                        onChange={(e) => setThemeKey(key, e.target.value)}
+                        className="w-full bg-transparent font-mono text-xs text-foreground outline-none"
+                        spellCheck={false}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </section>
 
           {/* Games */}

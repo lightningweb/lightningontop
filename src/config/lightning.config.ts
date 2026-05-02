@@ -25,6 +25,32 @@ export type Game = {
   category?: "game" | "app";
 };
 
+/** All colors are HSL strings like "222 39% 6%" (no hsl() wrapper, no commas).
+ *  These map 1:1 to the CSS variables defined in src/index.css. */
+export type ThemeColors = {
+  background: string;
+  foreground: string;
+  card: string;
+  cardForeground: string;
+  primary: string;
+  primaryForeground: string;
+  secondary: string;
+  secondaryForeground: string;
+  muted: string;
+  mutedForeground: string;
+  accent: string;
+  accentForeground: string;
+  destructive: string;
+  destructiveForeground: string;
+  border: string;
+  input: string;
+  ring: string;
+  /** Color of the bar at the top of the in-app game player. */
+  gameFrameBar: string;
+  /** Background behind the game iframe (letterboxing). */
+  gameFrameBackground: string;
+};
+
 export type LightningConfig = {
   siteName: string;
   tagline: string;
@@ -40,6 +66,30 @@ export type LightningConfig = {
   quotes: { text: string; author?: string }[];
   /** Top nav links. Add/remove freely. */
   nav: { label: string; to: string }[];
+  /** Site-wide theme colors. Edit from /admin. */
+  theme?: Partial<ThemeColors>;
+};
+
+export const DEFAULT_THEME: ThemeColors = {
+  background: "222 39% 6%",
+  foreground: "210 30% 96%",
+  card: "222 30% 9%",
+  cardForeground: "210 30% 96%",
+  primary: "45 95% 58%",
+  primaryForeground: "45 60% 8%",
+  secondary: "222 24% 14%",
+  secondaryForeground: "210 30% 96%",
+  muted: "222 22% 12%",
+  mutedForeground: "218 14% 60%",
+  accent: "45 95% 58%",
+  accentForeground: "45 60% 8%",
+  destructive: "0 72% 55%",
+  destructiveForeground: "210 40% 98%",
+  border: "222 20% 16%",
+  input: "222 20% 16%",
+  ring: "45 95% 58%",
+  gameFrameBar: "222 30% 9%",
+  gameFrameBackground: "0 0% 0%",
 };
 
 export const config: LightningConfig = {
