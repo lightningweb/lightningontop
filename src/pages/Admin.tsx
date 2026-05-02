@@ -190,9 +190,16 @@ export const STORAGE_KEY = "lightning.config.overrides.v1";
   const labelCls = "block font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-1.5";
   const sectionCls = "rounded-2xl border border-border bg-card/40 p-6 backdrop-blur";
 
+  const theme: ThemeColors = resolveTheme(draft);
+  const setThemeKey = (k: keyof ThemeColors, v: string) =>
+    setDraft({ ...draft, theme: { ...(draft.theme ?? {}), [k]: v } });
+
+  // Live preview: apply the draft theme as the user edits.
+  useEffect(() => { applyTheme(draft); }, [draft]);
+
   return (
     <div className="min-h-screen bg-topo">
-      <div className="mx-auto max-w-5xl px-6 py-8 md:py-10">
+      <div className="w-full max-w-7xl mx-auto px-6 py-8 md:py-10">
         <Header siteName={draft.siteName} version={draft.version} nav={draft.nav} />
 
         <div className="mt-10 mb-8 flex flex-wrap items-end justify-between gap-4">
@@ -222,9 +229,6 @@ export const STORAGE_KEY = "lightning.config.overrides.v1";
         )}
 
         <div className="space-y-6">
-          {/* AI assistant */}
-          <AdminChat draft={draft} setDraft={setDraft} password={adminPw} />
-
           {/* Settings */}
           <section className={sectionCls}>
             <h2 className="mb-4 font-mono text-[11px] uppercase tracking-[0.2em] text-primary">◆ settings</h2>
