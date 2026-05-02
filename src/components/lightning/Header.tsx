@@ -1,8 +1,18 @@
 import { NavLink, Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Menu } from "lucide-react";
+import { Menu, Home, Gamepad2, Boxes, Settings as SettingsIcon, ShieldCheck, Link as LinkIcon } from "lucide-react";
 
 type NavItem = { label: string; to: string };
+
+function iconFor(item: NavItem) {
+  const key = (item.label + " " + item.to).toLowerCase();
+  if (key.includes("home") || item.to === "/") return Home;
+  if (key.includes("game")) return Gamepad2;
+  if (key.includes("app")) return Boxes;
+  if (key.includes("setting")) return SettingsIcon;
+  if (key.includes("admin")) return ShieldCheck;
+  return LinkIcon;
+}
 
 export const Header = ({
   siteName,
@@ -32,23 +42,27 @@ export const Header = ({
       {/* Hover bridge so the menu doesn't close in the gap */}
       <div className="invisible absolute right-0 top-full z-40 pt-2 opacity-0 transition-all duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
         <nav className="min-w-[180px] rounded-xl border border-border bg-card/95 p-1.5 shadow-soft backdrop-blur">
-          {nav.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.to === "/"}
-              className={({ isActive }) =>
-                cn(
-                  "block rounded-md px-3 py-2 font-mono text-[11px] uppercase tracking-widest transition-colors whitespace-nowrap",
-                  isActive
-                    ? "bg-secondary/70 text-primary"
-                    : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
-                )
-              }
-            >
-              {item.label}
-            </NavLink>
-          ))}
+          {nav.map((item) => {
+            const Icon = iconFor(item);
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.to === "/"}
+                className={({ isActive }) =>
+                  cn(
+                    "flex items-center gap-2 rounded-md px-3 py-2 font-mono text-[11px] uppercase tracking-widest transition-colors whitespace-nowrap",
+                    isActive
+                      ? "bg-secondary/70 text-primary"
+                      : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
+                  )
+                }
+              >
+                <Icon className="h-3.5 w-3.5" />
+                {item.label}
+              </NavLink>
+            );
+          })}
         </nav>
       </div>
     </div>
