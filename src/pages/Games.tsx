@@ -67,7 +67,7 @@ const Games = () => {
                 : <>No games match "<span className="text-foreground">{query}</span>".</>}
             </div>
           ) : (
-            <div className={`grid gap-4 ${settings.compactCards ? "grid-cols-3 sm:grid-cols-4 lg:grid-cols-6" : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"}`}>
+            <div className={`grid gap-4 ${settings.compactCards ? "grid-cols-3 sm:grid-cols-5 lg:grid-cols-7 xl:grid-cols-8" : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6"}`}>
               {filtered.map((g, i) => (
                 <GameCard key={g.id} game={g} index={i} onOpen={setActive} />
               ))}
