@@ -332,6 +332,48 @@ export const STORAGE_KEY = "lightning.config.overrides.v1";
             </label>
           </section>
 
+          {/* Theme */}
+          <section className={sectionCls}>
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="font-mono text-[11px] uppercase tracking-[0.2em] text-primary">◆ theme · colors</h2>
+              <button
+                onClick={() => setDraft({ ...draft, theme: { ...DEFAULT_THEME } })}
+                className="rounded-lg border border-border px-3 py-1.5 font-mono text-[11px] uppercase tracking-widest text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground"
+              >
+                reset theme
+              </button>
+            </div>
+            <p className="mb-4 text-xs text-muted-foreground">
+              live preview as you edit. saves with the rest of the config.
+            </p>
+            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+              {THEME_FIELDS.map(({ key, label }) => {
+                const val = theme[key];
+                const hex = hslStringToHex(val);
+                return (
+                  <div key={key} className="flex items-center gap-3 rounded-lg border border-border bg-background/40 px-3 py-2">
+                    <input
+                      type="color"
+                      value={hex}
+                      onChange={(e) => setThemeKey(key, hexToHslString(e.target.value))}
+                      className="h-9 w-9 cursor-pointer rounded border border-border bg-transparent"
+                      aria-label={label}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{label}</div>
+                      <input
+                        value={val}
+                        onChange={(e) => setThemeKey(key, e.target.value)}
+                        className="w-full bg-transparent font-mono text-xs text-foreground outline-none"
+                        spellCheck={false}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
           {/* Games */}
           <section className={sectionCls}>
             <div className="mb-4 flex items-center justify-between">
