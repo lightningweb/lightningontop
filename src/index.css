@@ -123,8 +123,10 @@ All colors MUST be HSL.
 
   /* Repurpose .font-mono so existing labels use the display font instead of monospace. */
   .font-mono {
-    font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
-    letter-spacing: 0.04em;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: none;
   }
 
   h1, h2, h3, h4 {
