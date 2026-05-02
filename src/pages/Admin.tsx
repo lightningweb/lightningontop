@@ -173,6 +173,7 @@ const Admin = () => {
         nav: draft.nav,
         games: draft.games,
         quotes: draft.quotes,
+        theme: draft.theme,
       },
       null,
       2
