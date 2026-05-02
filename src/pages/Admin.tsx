@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { type Game, type LightningConfig } from "@/config/lightning.config";
+import { DEFAULT_THEME, type Game, type LightningConfig, type ThemeColors } from "@/config/lightning.config";
 import {
   clearOverrides,
   getLiveConfig,
@@ -9,9 +9,10 @@ import {
   setAdminAuthed,
   verifyAdminPassword,
   refreshConfigFromCloud,
+  applyTheme,
+  resolveTheme,
 } from "@/lib/lightning";
 import { Header } from "@/components/lightning/Header";
-import { AdminChat } from "@/components/lightning/AdminChat";
 
 const blankGame = (): Game => ({
   id: `game-${Math.random().toString(36).slice(2, 7)}`,
