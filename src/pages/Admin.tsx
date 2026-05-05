@@ -13,6 +13,7 @@ import {
   resolveTheme,
 } from "@/lib/lightning";
 import { Header } from "@/components/lightning/Header";
+import { AdminInbox } from "@/components/lightning/AdminInbox";
 
 const blankGame = (): Game => ({
   id: `game-${Math.random().toString(36).slice(2, 7)}`,
@@ -464,6 +465,13 @@ export const STORAGE_KEY = "lightning.config.overrides.v1";
                 </div>
               ))}
             </div>
+          </section>
+
+          {/* Inbox */}
+          <section className={sectionCls}>
+            <h2 className="mb-4 font-mono text-[11px] uppercase tracking-[0.2em] text-primary">◆ inbox · @lightning dms</h2>
+            <p className="mb-4 text-xs text-muted-foreground">read and reply to messages users send to @lightning.</p>
+            <AdminInbox password={adminPw} />
           </section>
 
           <p className="px-2 pb-12 font-mono text-[11px] leading-relaxed text-muted-foreground/70">
