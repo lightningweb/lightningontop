@@ -18,7 +18,7 @@ const Index = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-topo">
-      <div className="mx-auto w-full max-w-6xl px-6 py-8 md:py-10">
+      <div className="w-full px-4 md:px-10 py-8 md:py-10">
         <Header siteName={config.siteName} version={config.version} nav={config.nav} />
       </div>
 

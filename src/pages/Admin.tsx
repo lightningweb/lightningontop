@@ -270,7 +270,7 @@ export const STORAGE_KEY = "lightning.config.overrides.v1";
 
   return (
     <div className="min-h-screen bg-topo">
-      <div className="w-full max-w-7xl mx-auto px-6 py-8 md:py-10">
+      <div className="w-full px-4 md:px-10 py-8 md:py-10">
         <Header siteName={draft.siteName} version={draft.version} nav={draft.nav} />
 
         <div className="mt-10 mb-8 flex flex-wrap items-end justify-between gap-4">
