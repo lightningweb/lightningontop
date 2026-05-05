@@ -29,7 +29,7 @@ const Apps = () => {
 
   return (
     <div className="min-h-screen bg-topo">
-      <div className="mx-auto max-w-6xl px-6 py-8 md:py-10">
+      <div className="w-full px-4 md:px-10 py-8 md:py-10">
         <Header siteName={config.siteName} version={config.version} nav={config.nav} />
         <main className="pt-10 md:pt-14">
           <div className="mb-8 flex flex-col gap-5">
