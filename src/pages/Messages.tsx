@@ -133,13 +133,10 @@ const Messages = () => {
     }
     const { error } = await supabase
       .from("friendships")
-      .insert([
-        { user_id: user.id, friend_id: p.id },
-        { user_id: p.id, friend_id: user.id },
-      ]);
+      .insert({ user_id: user.id, friend_id: p.id });
     if (error && !error.message.toLowerCase().includes("duplicate")) {
-      // Ignore the reverse one failing if RLS blocks (expected) — try just our side
-      await supabase.from("friendships").insert({ user_id: user.id, friend_id: p.id });
+      toast({ title: "couldn't add", description: error.message });
+      return;
     }
     toast({ title: `added @${p.username}` });
     setAddUsername("");
