@@ -1,6 +1,7 @@
 import { NavLink, Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Menu, Home, Gamepad2, Boxes, Settings as SettingsIcon, ShieldCheck, Link as LinkIcon } from "lucide-react";
+import { Menu, Home, Gamepad2, Boxes, Settings as SettingsIcon, ShieldCheck, Link as LinkIcon, User, LogOut } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 type NavItem = { label: string; to: string };
 
@@ -22,7 +23,9 @@ export const Header = ({
   siteName: string;
   version: string;
   nav?: NavItem[];
-}) => (
+}) => {
+  const { user, profile, signOut } = useAuth();
+  return (
   <header className="flex items-center justify-between gap-6">
     <Link to="/" className="group flex items-center gap-2.5">
       <span className="grid h-8 w-8 place-items-center rounded-lg border border-border bg-secondary/60 text-primary transition-colors group-hover:border-primary/50">
@@ -31,7 +34,31 @@ export const Header = ({
       <span className="text-sm font-semibold tracking-tight text-primary">{siteName}</span>
       <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{version}</span>
     </Link>
-    <div className="relative group">
+    <div className="flex items-center gap-2">
+      {user ? (
+        <div className="flex items-center gap-2 rounded-lg border border-border bg-secondary/60 px-2.5 py-1.5">
+          <User className="h-3.5 w-3.5 text-primary" />
+          <span className="font-mono text-[11px] uppercase tracking-widest text-foreground">
+            {profile?.username ?? "you"}
+          </span>
+          <button
+            onClick={() => signOut()}
+            aria-label="sign out"
+            className="ml-1 text-muted-foreground transition-colors hover:text-destructive"
+          >
+            <LogOut className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      ) : (
+        <Link
+          to="/auth"
+          className="flex items-center gap-1.5 rounded-lg border border-border bg-secondary/60 px-3 py-1.5 font-mono text-[11px] uppercase tracking-widest text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
+        >
+          <User className="h-3.5 w-3.5" />
+          sign in
+        </Link>
+      )}
+      <div className="relative group">
       <button
         type="button"
         aria-label="open menu"
@@ -65,6 +92,8 @@ export const Header = ({
           })}
         </nav>
       </div>
+      </div>
     </div>
   </header>
 );
+};

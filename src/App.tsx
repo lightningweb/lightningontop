@@ -10,6 +10,8 @@ import Maintenance from "./pages/Maintenance.tsx";
 import Games from "./pages/Games.tsx";
 import Apps from "./pages/Apps.tsx";
 import Settings from "./pages/Settings.tsx";
+import Auth from "./pages/Auth.tsx";
+import { AuthProvider } from "./hooks/useAuth";
 
 const queryClient = new QueryClient();
 
@@ -19,16 +21,19 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter basename={import.meta.env.BASE_URL}>
+        <AuthProvider>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/games" element={<Games />} />
           <Route path="/apps" element={<Apps />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/maintenance" element={<Maintenance />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
