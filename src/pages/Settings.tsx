@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { getLiveConfig } from "@/lib/lightning";
 import { Header } from "@/components/lightning/Header";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 const SETTINGS_KEY = "lightning.user.settings.v1";
 
@@ -44,6 +47,33 @@ export function applySettings(s: UserSettings) {
 const Settings = () => {
   const config = getLiveConfig();
   const [settings, setSettings] = useState<UserSettings>(loadSettings());
+  const { user, profile } = useAuth();
+  const [displayName, setDisplayName] = useState("");
+  const [savingAcct, setSavingAcct] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("display_name,username")
+        .eq("id", user.id)
+        .maybeSingle();
+      setDisplayName(data?.display_name ?? data?.username ?? "");
+    })();
+  }, [user]);
+
+  const saveAccount = async () => {
+    if (!user) return;
+    setSavingAcct(true);
+    const { error } = await supabase
+      .from("profiles")
+      .update({ display_name: displayName.trim() || profile?.username || "" })
+      .eq("id", user.id);
+    setSavingAcct(false);
+    if (error) toast({ title: "save failed", description: error.message });
+    else toast({ title: "account updated" });
+  };
 
   useEffect(() => {
     document.title = `settings · ${config.siteName}`;
@@ -92,6 +122,45 @@ const Settings = () => {
               </span>
             </h1>
           </div>
+
+          <section className="mb-6 rounded-2xl border border-border bg-card/40 p-6 backdrop-blur space-y-4">
+            <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-primary">◆ account</div>
+            {user ? (
+              <>
+                <div>
+                  <label className="mb-1.5 block font-mono text-[10px] uppercase tracking-widest text-muted-foreground">username</label>
+                  <div className="rounded-md border border-border bg-background/40 px-3 py-2 text-sm text-muted-foreground">@{profile?.username}</div>
+                </div>
+                <div>
+                  <label className="mb-1.5 block font-mono text-[10px] uppercase tracking-widest text-muted-foreground">display name</label>
+                  <input
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary/60"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={saveAccount}
+                    disabled={savingAcct}
+                    className="rounded-lg bg-primary px-4 py-2 font-mono text-[11px] uppercase tracking-widest text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-40"
+                  >
+                    {savingAcct ? "saving…" : "save account"}
+                  </button>
+                  <Link
+                    to="/messages"
+                    className="rounded-lg border border-border px-4 py-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground"
+                  >
+                    open messages →
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                <Link to="/auth" className="text-primary hover:underline">sign in</Link> to manage your account, friends, and dms.
+              </p>
+            )}
+          </section>
 
           <section className="rounded-2xl border border-border bg-card/40 p-6 backdrop-blur space-y-4">
             <div>

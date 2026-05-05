@@ -1,6 +1,6 @@
 import { NavLink, Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Menu, Home, Gamepad2, Boxes, Settings as SettingsIcon, ShieldCheck, Link as LinkIcon, User, LogOut } from "lucide-react";
+import { Menu, Home, Gamepad2, Boxes, Settings as SettingsIcon, ShieldCheck, Link as LinkIcon, User, LogOut, MessageCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 type NavItem = { label: string; to: string };
@@ -12,6 +12,7 @@ function iconFor(item: NavItem) {
   if (key.includes("app")) return Boxes;
   if (key.includes("setting")) return SettingsIcon;
   if (key.includes("admin")) return ShieldCheck;
+  if (key.includes("message") || key.includes("dm") || key.includes("friend")) return MessageCircle;
   return LinkIcon;
 }
 
@@ -41,6 +42,13 @@ export const Header = ({
           <span className="font-mono text-[11px] uppercase tracking-widest text-foreground">
             {profile?.username ?? "you"}
           </span>
+          <NavLink
+            to="/messages"
+            aria-label="messages"
+            className="ml-1 text-muted-foreground transition-colors hover:text-primary"
+          >
+            <MessageCircle className="h-3.5 w-3.5" />
+          </NavLink>
           <button
             onClick={() => signOut()}
             aria-label="sign out"
