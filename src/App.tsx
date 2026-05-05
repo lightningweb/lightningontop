@@ -11,6 +11,7 @@ import Games from "./pages/Games.tsx";
 import Apps from "./pages/Apps.tsx";
 import Settings from "./pages/Settings.tsx";
 import Auth from "./pages/Auth.tsx";
+import Messages from "./pages/Messages.tsx";
 import { AuthProvider } from "./hooks/useAuth";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/apps" element={<Apps />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/messages" element={<Messages />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/maintenance" element={<Maintenance />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
