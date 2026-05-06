@@ -3,7 +3,7 @@ import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { pullSavesFromCloud, pushAllLocalSavesToCloud, setSyncUser } from "@/lib/gameSaves";
 
-type Profile = { id: string; username: string };
+type Profile = { id: string; username: string; tag?: string | null; banned_until?: string | null; ban_reason?: string | null };
 
 const REMEMBER_KEY = "lightning.auth.remember.v1";
 const SESSION_FLAG = "lightning.auth.session.v1";
@@ -61,9 +61,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setTimeout(async () => {
           const { data } = await supabase
             .from("profiles")
-            .select("id,username")
+            .select("id,username,tag,banned_until,ban_reason")
             .eq("id", s.user.id)
             .maybeSingle();
+          if (data?.banned_until && new Date(data.banned_until) > new Date()) {
+            const reason = data.ban_reason || "no reason provided";
+            await supabase.auth.signOut();
+            alert(`Your account is banned.\nReason: ${reason}`);
+            return;
+          }
           setProfile(data ?? null);
           await pullSavesFromCloud(s.user.id);
           await pushAllLocalSavesToCloud(s.user.id);
@@ -80,10 +86,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (s?.user) {
         supabase
           .from("profiles")
-          .select("id,username")
+          .select("id,username,tag,banned_until,ban_reason")
           .eq("id", s.user.id)
           .maybeSingle()
-          .then(({ data }) => setProfile(data ?? null));
+          .then(({ data }) => {
+            if (data?.banned_until && new Date(data.banned_until) > new Date()) {
+              const reason = data.ban_reason || "no reason provided";
+              supabase.auth.signOut();
+              alert(`Your account is banned.\nReason: ${reason}`);
+              return;
+            }
+            setProfile(data ?? null);
+          });
         pullSavesFromCloud(s.user.id);
       }
     });
