@@ -37,8 +37,8 @@ export const Header = ({
     </Link>
     <div className="flex items-center gap-2">
       {user ? (
-        <div className="flex items-center gap-2 rounded-lg border border-border bg-secondary/60 px-2.5 py-1.5">
-          <User className="h-3.5 w-3.5 text-primary" />
+        <div className="flex h-9 items-center gap-2 rounded-lg border border-border bg-secondary/60 px-3">
+          <User className="h-4 w-4 text-primary" />
           <span className="font-mono text-[11px] uppercase tracking-widest text-foreground">
             {profile?.username ?? "you"}
           </span>
@@ -47,22 +47,22 @@ export const Header = ({
             aria-label="messages"
             className="ml-1 text-muted-foreground transition-colors hover:text-primary"
           >
-            <MessageCircle className="h-3.5 w-3.5" />
+            <MessageCircle className="h-4 w-4" />
           </NavLink>
           <button
             onClick={() => signOut()}
             aria-label="sign out"
             className="ml-1 text-muted-foreground transition-colors hover:text-destructive"
           >
-            <LogOut className="h-3.5 w-3.5" />
+            <LogOut className="h-4 w-4" />
           </button>
         </div>
       ) : (
         <Link
           to="/auth"
-          className="flex items-center gap-1.5 rounded-lg border border-border bg-secondary/60 px-3 py-1.5 font-mono text-[11px] uppercase tracking-widest text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
+          className="flex h-9 items-center gap-1.5 rounded-lg border border-border bg-secondary/60 px-3 font-mono text-[11px] uppercase tracking-widest text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
         >
-          <User className="h-3.5 w-3.5" />
+          <User className="h-4 w-4" />
           sign in
         </Link>
       )}
