@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { setRememberMe } from "@/hooks/useAuth";
 import { Header } from "@/components/lightning/Header";
 import { getLiveConfig } from "@/lib/lightning";
 import { toast } from "@/hooks/use-toast";
@@ -14,6 +15,7 @@ const Auth = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [remember, setRemember] = useState(true);
 
   useEffect(() => {
     document.title = `account · ${config.siteName}`;
@@ -27,6 +29,7 @@ const Auth = () => {
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setRememberMe(remember);
     const u = username.trim();
     if (!u || u.length < 3) {
       toast({ title: "username too short", description: "use at least 3 characters" });
@@ -126,6 +129,15 @@ const Auth = () => {
             >
               {busy ? "..." : mode === "signin" ? "sign in" : "create account"}
             </button>
+            <label className="flex items-center gap-2 px-1 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+              <input
+                type="checkbox"
+                checked={remember}
+                onChange={(e) => setRemember(e.target.checked)}
+                className="h-3.5 w-3.5 accent-primary"
+              />
+              remember me on this device
+            </label>
             <button
               type="button"
               onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
