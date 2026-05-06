@@ -5,6 +5,19 @@ import { pullSavesFromCloud, pushAllLocalSavesToCloud, setSyncUser } from "@/lib
 
 type Profile = { id: string; username: string };
 
+const REMEMBER_KEY = "lightning.auth.remember.v1";
+const SESSION_FLAG = "lightning.auth.session.v1";
+
+export const setRememberMe = (v: boolean) => {
+  try {
+    if (v) localStorage.setItem(REMEMBER_KEY, "1");
+    else localStorage.removeItem(REMEMBER_KEY);
+    sessionStorage.setItem(SESSION_FLAG, "1");
+  } catch {
+    /* ignore */
+  }
+};
+
 type AuthCtx = {
   user: User | null;
   session: Session | null;
@@ -28,6 +41,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // If the user did NOT check "remember me", clear the persisted session
+    // when they open a new browser session (sessionStorage was wiped).
+    try {
+      const remembered = localStorage.getItem(REMEMBER_KEY) === "1";
+      const sameSession = sessionStorage.getItem(SESSION_FLAG) === "1";
+      if (!remembered && !sameSession) {
+        supabase.auth.signOut().catch(() => {});
+      }
+      sessionStorage.setItem(SESSION_FLAG, "1");
+    } catch { /* ignore */ }
+
     const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
       setSession(s);
       setUser(s?.user ?? null);
