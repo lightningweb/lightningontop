@@ -27,16 +27,16 @@ Deno.serve(async (req) => {
     );
 
     if (action === "list_threads") {
-      // Every user that has exchanged a message with @lightning
+      // Only users who have actually MESSAGED @lightning (sent at least one inbound message).
       const { data: msgs, error } = await supabase
         .from("messages")
         .select("sender_id,recipient_id,content,created_at")
-        .or(`sender_id.eq.${LIGHTNING_ID},recipient_id.eq.${LIGHTNING_ID}`)
+        .eq("recipient_id", LIGHTNING_ID)
         .order("created_at", { ascending: false });
       if (error) throw error;
       const byUser = new Map<string, { last: string; at: string }>();
       for (const m of msgs ?? []) {
-        const other = m.sender_id === LIGHTNING_ID ? m.recipient_id : m.sender_id;
+        const other = m.sender_id;
         if (!byUser.has(other)) byUser.set(other, { last: m.content, at: m.created_at });
       }
       const ids = [...byUser.keys()];
@@ -56,6 +56,43 @@ Deno.serve(async (req) => {
         };
       });
       return new Response(JSON.stringify({ threads }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (action === "list_users") {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id,username,display_name,tag,banned_until,ban_reason,created_at")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return new Response(JSON.stringify({ users: data ?? [] }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (action === "update_user") {
+      const userId = String(body?.user_id ?? "");
+      if (!userId) throw new Error("Missing user_id");
+      const patch: Record<string, unknown> = {};
+      if (body?.tag !== undefined) patch.tag = body.tag === "" ? null : String(body.tag);
+      if (body?.display_name !== undefined) patch.display_name = String(body.display_name);
+      if (body?.banned_until !== undefined)
+        patch.banned_until = body.banned_until === null || body.banned_until === ""
+          ? null
+          : String(body.banned_until);
+      if (body?.ban_reason !== undefined)
+        patch.ban_reason = body.ban_reason === "" ? null : String(body.ban_reason);
+      const { error } = await supabase.from("profiles").update(patch).eq("id", userId);
+      if (error) throw error;
+      // If a permanent ban (banned_until far future) or any ban — also force-revoke sessions
+      if (patch.banned_until) {
+        try {
+          // @ts-expect-error admin api
+          await supabase.auth.admin.signOut(userId);
+        } catch (_) { /* ignore */ }
+      }
+      return new Response(JSON.stringify({ ok: true }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
