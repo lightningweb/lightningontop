@@ -61,4 +61,48 @@ export function setSyncUser(userId: string | null) {
       pushSaveToCloud(currentUser, k, v).catch(() => {});
     }
   };
+
+  // ---- iframe <-> parent save bridge ----
+  // Games hosted on lightningweb.github.io can postMessage to the parent to
+  // persist save data into the user's cloud account, and request a restore.
+  // Message shapes:
+  //   { lightning: "save", key: "...", value: "..." }
+  //   { lightning: "load", key: "...", id?: "req-id" }   -> parent replies with { lightning:"load:result", key, value, id }
+  //   { lightning: "list", id?: "req-id" }               -> parent replies with { lightning:"list:result", keys, id }
+  //   { lightning: "delete", key: "..." }
+  if (typeof window !== "undefined" && !(window as any).__lightningBridge) {
+    (window as any).__lightningBridge = true;
+    window.addEventListener("message", async (ev) => {
+      const data = ev.data as { lightning?: string; key?: string; value?: string; id?: string } | null;
+      if (!data || typeof data !== "object" || !data.lightning) return;
+      const src = ev.source as Window | null;
+      const post = (msg: unknown) => src?.postMessage(msg, "*");
+      const ns = (k: string) => `iframe:${k}`;
+      try {
+        if (data.lightning === "save" && data.key) {
+          const k = ns(data.key);
+          localStorage.setItem(k, data.value ?? "");
+          // setItem patch above already mirrors to cloud
+        } else if (data.lightning === "load" && data.key) {
+          const v = localStorage.getItem(ns(data.key));
+          post({ lightning: "load:result", key: data.key, value: v, id: data.id });
+        } else if (data.lightning === "list") {
+          const keys: string[] = [];
+          for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (k && k.startsWith("iframe:")) keys.push(k.slice("iframe:".length));
+          }
+          post({ lightning: "list:result", keys, id: data.id });
+        } else if (data.lightning === "delete" && data.key) {
+          localStorage.removeItem(ns(data.key));
+          if (currentUser) {
+            await supabase.from("game_saves").delete()
+              .eq("user_id", currentUser).eq("key", ns(data.key));
+          }
+        }
+      } catch {
+        /* ignore */
+      }
+    });
+  }
 }
