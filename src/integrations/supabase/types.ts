@@ -79,23 +79,32 @@ export type Database = {
       }
       profiles: {
         Row: {
+          ban_reason: string | null
+          banned_until: string | null
           created_at: string
           display_name: string | null
           id: string
+          tag: string | null
           updated_at: string
           username: string
         }
         Insert: {
+          ban_reason?: string | null
+          banned_until?: string | null
           created_at?: string
           display_name?: string | null
           id: string
+          tag?: string | null
           updated_at?: string
           username: string
         }
         Update: {
+          ban_reason?: string | null
+          banned_until?: string | null
           created_at?: string
           display_name?: string | null
           id?: string
+          tag?: string | null
           updated_at?: string
           username?: string
         }
