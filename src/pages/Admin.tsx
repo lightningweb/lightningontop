@@ -468,18 +468,20 @@ export const STORAGE_KEY = "lightning.config.overrides.v1";
             </div>
           </section>
 
-          {/* Inbox */}
-          <section className={sectionCls}>
-            <h2 className="mb-4 font-mono text-[11px] uppercase tracking-[0.2em] text-primary">◆ inbox · @lightning dms</h2>
-            <p className="mb-4 text-xs text-muted-foreground">read and reply to messages users send to @lightning.</p>
-            <AdminInbox password={adminPw} />
-          </section>
-
-          {/* Accounts */}
-          <section className={sectionCls}>
+          {/* Accounts (first, so it's never overlapped) */}
+          <section className={`${sectionCls} relative isolate`}>
             <h2 className="mb-4 font-mono text-[11px] uppercase tracking-[0.2em] text-primary">◆ accounts</h2>
             <p className="mb-4 text-xs text-muted-foreground">tag users (e.g. STAFF) and ban accounts temporarily or permanently.</p>
             <AdminUsers password={adminPw} />
+          </section>
+
+          {/* Inbox — its own contained, scrollable section so long lists never spill over */}
+          <section className={`${sectionCls} relative isolate`}>
+            <h2 className="mb-4 font-mono text-[11px] uppercase tracking-[0.2em] text-primary">◆ inbox · @lightning dms</h2>
+            <p className="mb-4 text-xs text-muted-foreground">read and reply to messages users send to @lightning.</p>
+            <div className="max-h-[70vh] overflow-hidden">
+              <AdminInbox password={adminPw} />
+            </div>
           </section>
 
           <p className="px-2 pb-12 font-mono text-[11px] leading-relaxed text-muted-foreground/70">

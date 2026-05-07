@@ -2,8 +2,20 @@ import { createContext, useContext, useEffect, useState, ReactNode } from "react
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { pullSavesFromCloud, pushAllLocalSavesToCloud, setSyncUser } from "@/lib/gameSaves";
+import { BanScreen } from "@/pages/BanScreen";
+import { useGlobalNotifications } from "@/hooks/useGlobalNotifications";
+import { useActivityTracker } from "@/hooks/useActivityTracker";
 
-type Profile = { id: string; username: string; tag?: string | null; banned_until?: string | null; ban_reason?: string | null };
+type Profile = {
+  id: string;
+  username: string;
+  display_name?: string | null;
+  tag?: string | null;
+  xp?: number | null;
+  level?: number | null;
+  banned_until?: string | null;
+  ban_reason?: string | null;
+};
 
 const REMEMBER_KEY = "lightning.auth.remember.v1";
 const SESSION_FLAG = "lightning.auth.session.v1";
@@ -39,6 +51,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [banned, setBanned] = useState<{ until: string; reason: string | null } | null>(null);
 
   useEffect(() => {
     // If the user did NOT check "remember me", clear the persisted session
@@ -61,21 +74,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setTimeout(async () => {
           const { data } = await supabase
             .from("profiles")
-            .select("id,username,tag,banned_until,ban_reason")
+            .select("id,username,display_name,tag,xp,level,banned_until,ban_reason")
             .eq("id", s.user.id)
             .maybeSingle();
           if (data?.banned_until && new Date(data.banned_until) > new Date()) {
-            const reason = data.ban_reason || "no reason provided";
-            await supabase.auth.signOut();
-            alert(`Your account is banned.\nReason: ${reason}`);
+            setBanned({ until: data.banned_until, reason: data.ban_reason ?? null });
+            setProfile(data ?? null);
             return;
           }
+          setBanned(null);
           setProfile(data ?? null);
           await pullSavesFromCloud(s.user.id);
           await pushAllLocalSavesToCloud(s.user.id);
         }, 0);
       } else {
         setProfile(null);
+        setBanned(null);
       }
     });
     supabase.auth.getSession().then(({ data: { session: s } }) => {
@@ -86,16 +100,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (s?.user) {
         supabase
           .from("profiles")
-          .select("id,username,tag,banned_until,ban_reason")
+          .select("id,username,display_name,tag,xp,level,banned_until,ban_reason")
           .eq("id", s.user.id)
           .maybeSingle()
           .then(({ data }) => {
             if (data?.banned_until && new Date(data.banned_until) > new Date()) {
-              const reason = data.ban_reason || "no reason provided";
-              supabase.auth.signOut();
-              alert(`Your account is banned.\nReason: ${reason}`);
+              setBanned({ until: data.banned_until, reason: data.ban_reason ?? null });
+              setProfile(data ?? null);
               return;
             }
+            setBanned(null);
             setProfile(data ?? null);
           });
         pullSavesFromCloud(s.user.id);
@@ -110,9 +124,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <Ctx.Provider value={{ user, session, profile, loading, signOut }}>
-      {children}
+      <GlobalSubscriptions />
+      {banned ? <BanScreen until={banned.until} reason={banned.reason} /> : children}
     </Ctx.Provider>
   );
+};
+
+const GlobalSubscriptions = () => {
+  useGlobalNotifications();
+  useActivityTracker();
+  return null;
 };
 
 export const useAuth = () => useContext(Ctx);
