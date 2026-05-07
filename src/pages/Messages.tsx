@@ -226,26 +226,17 @@ const Messages = () => {
 
   const acceptRequest = async (req: FriendRequest) => {
     if (!user) return;
-    // Both sides create their own friendship row (RLS requires user_id = self)
-    await supabase.from("friendships").insert({ user_id: user.id, friend_id: req.from_user_id });
-    // Notify ourselves of completion
+    const { error } = await supabase.rpc("accept_friend_request", { req_id: req.id });
+    if (error) {
+      toast({ title: "couldn't accept", description: error.message });
+      return;
+    }
     await notify(user.id, {
       kind: "friend_added",
       title: `You and @${req.username} are now friends`,
       link: `/messages?user=${req.from_user_id}`,
     });
-    // Try to add the reverse friendship via the requester's perspective:
-    // We can't insert with user_id = other under RLS. Instead the requester side will mirror on next load,
-    // OR we provide a backfill: track that acceptance happened via messaging the user.
-    // Cleanup the request
-    await supabase.from("friend_requests").delete().eq("id", req.id);
     await bumpQuest(user.id, "friend_someone", 1);
-    // Reverse-side mirror: send them a system-style DM so it surfaces on their list
-    // (they'll show up under their own accept flow next time too). For best UX,
-    // we additionally bump their notification by inserting via a small ping message:
-    await supabase
-      .from("messages")
-      .insert({ sender_id: user.id, recipient_id: req.from_user_id, content: "👋 (we're friends now!)" });
     setFriends((prev) =>
       prev.some((f) => f.id === req.from_user_id)
         ? prev
