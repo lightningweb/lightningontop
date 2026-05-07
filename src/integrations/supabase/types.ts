@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_sessions: {
+        Row: {
+          created_at: string
+          id: string
+          key: string | null
+          kind: string
+          seconds: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key?: string | null
+          kind: string
+          seconds?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key?: string | null
+          kind?: string
+          seconds?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      friend_requests: {
+        Row: {
+          created_at: string
+          from_user_id: string
+          id: string
+          to_user_id: string
+        }
+        Insert: {
+          created_at?: string
+          from_user_id: string
+          id?: string
+          to_user_id: string
+        }
+        Update: {
+          created_at?: string
+          from_user_id?: string
+          id?: string
+          to_user_id?: string
+        }
+        Relationships: []
+      }
       friendships: {
         Row: {
           created_at: string
@@ -77,6 +125,39 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          kind: string
+          link: string | null
+          read_at: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          kind: string
+          link?: string | null
+          read_at?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          link?: string | null
+          read_at?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           ban_reason: string | null
@@ -84,9 +165,11 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
+          level: number
           tag: string | null
           updated_at: string
           username: string
+          xp: number
         }
         Insert: {
           ban_reason?: string | null
@@ -94,9 +177,11 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id: string
+          level?: number
           tag?: string | null
           updated_at?: string
           username: string
+          xp?: number
         }
         Update: {
           ban_reason?: string | null
@@ -104,9 +189,53 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          level?: number
           tag?: string | null
           updated_at?: string
           username?: string
+          xp?: number
+        }
+        Relationships: []
+      }
+      quests: {
+        Row: {
+          code: string
+          completed_at: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          kind: string
+          progress: number
+          target: number
+          title: string
+          user_id: string
+          xp_reward: number
+        }
+        Insert: {
+          code: string
+          completed_at?: string | null
+          created_at?: string
+          expires_at: string
+          id?: string
+          kind: string
+          progress?: number
+          target?: number
+          title: string
+          user_id: string
+          xp_reward?: number
+        }
+        Update: {
+          code?: string
+          completed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          kind?: string
+          progress?: number
+          target?: number
+          title?: string
+          user_id?: string
+          xp_reward?: number
         }
         Relationships: []
       }
