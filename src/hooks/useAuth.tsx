@@ -3,6 +3,7 @@ import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { pullSavesFromCloud, pushAllLocalSavesToCloud, setSyncUser } from "@/lib/gameSaves";
 import { BanScreen } from "@/pages/BanScreen";
+import { useGlobalNotifications } from "@/hooks/useGlobalNotifications";
 
 type Profile = {
   id: string;
@@ -122,9 +123,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <Ctx.Provider value={{ user, session, profile, loading, signOut }}>
+      <GlobalSubscriptions />
       {banned ? <BanScreen until={banned.until} reason={banned.reason} /> : children}
     </Ctx.Provider>
   );
+};
+
+const GlobalSubscriptions = () => {
+  useGlobalNotifications();
+  return null;
 };
 
 export const useAuth = () => useContext(Ctx);
