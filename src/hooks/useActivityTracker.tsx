@@ -28,9 +28,12 @@ export function useActivityTracker(gameKey?: string) {
       // Credit per minute
       while (acc >= 60) {
         acc -= 60;
-        await bumpQuest(user.id, "play_lightning_15", 1);
-        await bumpQuest(user.id, "play_lightning_60", 1);
-        if (gameKey) {
+        if (!gameKey) {
+          // Site-wide tracker
+          await bumpQuest(user.id, "play_lightning_15", 1);
+          await bumpQuest(user.id, "play_lightning_60", 1);
+        } else {
+          // Game-specific tracker
           await bumpQuest(user.id, "play_minutes_20", 1);
           await bumpQuest(user.id, "play_minutes_120", 1);
           await bumpQuest(user.id, "any_game_10", 1);
