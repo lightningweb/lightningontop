@@ -105,6 +105,10 @@ export const config: LightningConfig = {
     { label: "home", to: "/" },
     { label: "games", to: "/games" },
     { label: "apps", to: "/apps" },
+    { label: "quests", to: "/quests" },
+    { label: "leaderboard", to: "/leaderboard" },
+    { label: "messages", to: "/messages" },
+    { label: "friends", to: "/messages" },
     { label: "settings", to: "/settings" },
   ],
 
