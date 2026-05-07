@@ -6,6 +6,7 @@ type Thread = {
   user_id: string;
   username: string;
   display_name: string;
+  tag?: string | null;
   last_message: string;
   last_at: string;
 };
@@ -98,7 +99,14 @@ export const AdminInbox = ({ password }: { password: string }) => {
                 active?.user_id === t.user_id ? "bg-secondary/60" : "hover:bg-secondary/30"
               }`}
             >
-              <div className="text-sm font-medium">{t.display_name}</div>
+              <div className="flex items-center gap-1.5 text-sm font-medium">
+                <span className="truncate">{t.display_name}</span>
+                {t.tag && (
+                  <span className="rounded bg-primary/20 px-1 py-0.5 font-mono text-[8px] uppercase tracking-widest text-primary">
+                    {t.tag}
+                  </span>
+                )}
+              </div>
               <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">@{t.username}</div>
               <div className="line-clamp-1 text-xs text-muted-foreground">{t.last_message}</div>
             </button>
@@ -112,7 +120,14 @@ export const AdminInbox = ({ password }: { password: string }) => {
         {active ? (
           <>
             <div className="border-b border-border px-3 py-2">
-              <div className="text-sm font-medium">{active.display_name}</div>
+              <div className="flex items-center gap-1.5 text-sm font-medium">
+                <span>{active.display_name}</span>
+                {active.tag && (
+                  <span className="rounded bg-primary/20 px-1 py-0.5 font-mono text-[8px] uppercase tracking-widest text-primary">
+                    {active.tag}
+                  </span>
+                )}
+              </div>
               <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">@{active.username}</div>
             </div>
             <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 space-y-2">

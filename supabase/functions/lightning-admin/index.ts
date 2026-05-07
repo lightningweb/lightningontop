@@ -42,7 +42,7 @@ Deno.serve(async (req) => {
       const ids = [...byUser.keys()];
       const { data: profiles } = await supabase
         .from("profiles")
-        .select("id,username,display_name")
+        .select("id,username,display_name,tag")
         .in("id", ids.length ? ids : ["00000000-0000-0000-0000-000000000000"]);
       const threads = ids.map((id) => {
         const p = profiles?.find((x) => x.id === id);
@@ -51,6 +51,7 @@ Deno.serve(async (req) => {
           user_id: id,
           username: p?.username ?? "unknown",
           display_name: p?.display_name ?? p?.username ?? "unknown",
+          tag: p?.tag ?? null,
           last_message: t.last,
           last_at: t.at,
         };

@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { pullSavesFromCloud, pushAllLocalSavesToCloud, setSyncUser } from "@/lib/gameSaves";
 import { BanScreen } from "@/pages/BanScreen";
 import { useGlobalNotifications } from "@/hooks/useGlobalNotifications";
+import { useActivityTracker } from "@/hooks/useActivityTracker";
 
 type Profile = {
   id: string;
@@ -131,6 +132,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 const GlobalSubscriptions = () => {
   useGlobalNotifications();
+  useActivityTracker();
   return null;
 };
 
