@@ -146,13 +146,20 @@ const Auth = () => {
               />
               remember me on this device
             </label>
-            <button
-              type="button"
-              onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-              className="w-full text-center font-mono text-[11px] uppercase tracking-widest text-muted-foreground hover:text-foreground"
-            >
-              {mode === "signin" ? "no account? sign up" : "have an account? sign in"}
-            </button>
+            {!lockdown && (
+              <button
+                type="button"
+                onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+                className="w-full text-center font-mono text-[11px] uppercase tracking-widest text-muted-foreground hover:text-foreground"
+              >
+                {mode === "signin" ? "no account? sign up" : "have an account? sign in"}
+              </button>
+            )}
+            {lockdown && (
+              <p className="text-center font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                sign ups are currently disabled
+              </p>
+            )}
             <Link
               to="/"
               className="block text-center font-mono text-[10px] uppercase tracking-widest text-muted-foreground hover:text-foreground"
