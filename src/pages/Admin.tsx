@@ -142,6 +142,7 @@ const Admin = () => {
       tagline: draft.tagline,
       version: draft.version,
       maintenanceMode: draft.maintenanceMode,
+      lockdown: draft.lockdown,
       games: draft.games,
       quotes: draft.quotes,
       footerLink: draft.footerLink,
@@ -331,6 +332,20 @@ export const STORAGE_KEY = "lightning.config.overrides.v1";
                 aria-pressed={draft.maintenanceMode}
               >
                 <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-background transition-all ${draft.maintenanceMode ? "left-[22px]" : "left-0.5"}`} />
+              </button>
+            </label>
+
+            <label className="mt-3 flex items-center justify-between rounded-lg border border-border bg-secondary/40 px-4 py-3">
+              <div>
+                <div className="text-sm font-medium">lockdown mode</div>
+                <div className="text-xs text-muted-foreground">disable new sign ups and hide games/apps behind a "Games have moved." notice</div>
+              </div>
+              <button
+                onClick={() => setDraft({ ...draft, lockdown: !draft.lockdown })}
+                className={`relative h-6 w-11 rounded-full transition-colors ${draft.lockdown ? "bg-primary" : "bg-muted"}`}
+                aria-pressed={!!draft.lockdown}
+              >
+                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-background transition-all ${draft.lockdown ? "left-[22px]" : "left-0.5"}`} />
               </button>
             </label>
           </section>
