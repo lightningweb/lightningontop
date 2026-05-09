@@ -11,7 +11,11 @@ const Auth = () => {
   const config = getLiveConfig();
   const { user, loading } = useAuth();
   const nav = useNavigate();
+  const lockdown = !!config.lockdown;
   const [mode, setMode] = useState<"signin" | "signup">("signin");
+  useEffect(() => {
+    if (lockdown) setMode("signin");
+  }, [lockdown]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -29,6 +33,10 @@ const Auth = () => {
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (lockdown && mode === "signup") {
+      toast({ title: "sign ups are disabled" });
+      return;
+    }
     setRememberMe(remember);
     const u = username.trim();
     if (!u || u.length < 3) {
