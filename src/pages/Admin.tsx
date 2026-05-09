@@ -111,6 +111,10 @@ const Admin = () => {
 
   useEffect(() => { document.title = "admin · lightning"; }, []);
 
+  // Live preview: apply the draft theme as the user edits.
+  // Must be declared before any conditional return to keep hook order stable.
+  useEffect(() => { applyTheme(draft); }, [draft]);
+
   const dirty = useMemo(() => JSON.stringify(draft) !== JSON.stringify(getLiveConfig()), [draft]);
 
   const tryLogin = async (e: React.FormEvent) => {
@@ -267,9 +271,6 @@ export const STORAGE_KEY = "lightning.config.overrides.v1";
   const theme: ThemeColors = resolveTheme(draft);
   const setThemeKey = (k: keyof ThemeColors, v: string) =>
     setDraft({ ...draft, theme: { ...(draft.theme ?? {}), [k]: v } });
-
-  // Live preview: apply the draft theme as the user edits.
-  useEffect(() => { applyTheme(draft); }, [draft]);
 
   return (
     <div className="min-h-screen bg-topo">
