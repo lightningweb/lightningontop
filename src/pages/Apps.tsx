@@ -20,6 +20,21 @@ const Apps = () => {
 
   if (config.maintenanceMode) return <Navigate to="/maintenance" replace />;
 
+  if (config.lockdown) {
+    return (
+      <div className="min-h-screen bg-topo">
+        <div className="w-full px-4 md:px-10 py-8 md:py-10">
+          <Header siteName={config.siteName} version={config.version} nav={config.nav} />
+          <main className="grid place-items-center pt-32">
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-foreground">
+              Games have moved.
+            </h1>
+          </main>
+        </div>
+      </div>
+    );
+  }
+
   const apps = config.games.filter((g) => g.category === "app");
   const filtered = apps.filter((g) => {
     const q = query.trim().toLowerCase();

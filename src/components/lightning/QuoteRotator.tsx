@@ -30,10 +30,10 @@ export const QuoteRotator = ({
   if (variant === "inline") {
     return (
       <div key={i} className="animate-quote mx-auto max-w-2xl">
-        <p className="text-balance text-base md:text-lg italic leading-relaxed text-muted-foreground">
+        <p className="text-balance text-2xl md:text-3xl italic leading-snug text-foreground">
           “{q.text}”
           {q.author && (
-            <span className="ml-2 not-italic font-mono text-xs uppercase tracking-widest text-muted-foreground/70">
+            <span className="ml-2 not-italic font-mono text-xs uppercase tracking-widest text-foreground/70">
               — {q.author}
             </span>
           )}

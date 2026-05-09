@@ -57,6 +57,8 @@ export type LightningConfig = {
   version: string;
   /** Flip to true to show the maintenance page instead of the homepage. */
   maintenanceMode: boolean;
+  /** Lockdown mode: disables sign ups and shows a "moved" message on games/apps. */
+  lockdown?: boolean;
   /** Optional: link shown in the footer. */
   footerLink?: { label: string; url: string };
   /** Admin password — used only for the local admin panel.

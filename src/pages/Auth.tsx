@@ -11,7 +11,11 @@ const Auth = () => {
   const config = getLiveConfig();
   const { user, loading } = useAuth();
   const nav = useNavigate();
+  const lockdown = !!config.lockdown;
   const [mode, setMode] = useState<"signin" | "signup">("signin");
+  useEffect(() => {
+    if (lockdown) setMode("signin");
+  }, [lockdown]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -29,6 +33,10 @@ const Auth = () => {
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (lockdown && mode === "signup") {
+      toast({ title: "sign ups are disabled" });
+      return;
+    }
     setRememberMe(remember);
     const u = username.trim();
     if (!u || u.length < 3) {
@@ -138,13 +146,20 @@ const Auth = () => {
               />
               remember me on this device
             </label>
-            <button
-              type="button"
-              onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-              className="w-full text-center font-mono text-[11px] uppercase tracking-widest text-muted-foreground hover:text-foreground"
-            >
-              {mode === "signin" ? "no account? sign up" : "have an account? sign in"}
-            </button>
+            {!lockdown && (
+              <button
+                type="button"
+                onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+                className="w-full text-center font-mono text-[11px] uppercase tracking-widest text-muted-foreground hover:text-foreground"
+              >
+                {mode === "signin" ? "no account? sign up" : "have an account? sign in"}
+              </button>
+            )}
+            {lockdown && (
+              <p className="text-center font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                sign ups are currently disabled
+              </p>
+            )}
             <Link
               to="/"
               className="block text-center font-mono text-[10px] uppercase tracking-widest text-muted-foreground hover:text-foreground"
