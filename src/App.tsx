@@ -9,6 +9,7 @@ import Admin from "./pages/Admin.tsx";
 import Maintenance from "./pages/Maintenance.tsx";
 import Games from "./pages/Games.tsx";
 import Apps from "./pages/Apps.tsx";
+import Tools from "./pages/Tools.tsx";
 import Settings from "./pages/Settings.tsx";
 import Auth from "./pages/Auth.tsx";
 import Messages from "./pages/Messages.tsx";
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/games" element={<Games />} />
           <Route path="/apps" element={<Apps />} />
+          <Route path="/tools" element={<Tools />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/messages" element={<Messages />} />
