@@ -36,7 +36,7 @@ export const Header = ({
   const lvl = user ? levelForXp(xp) : 0;
   // Primary nav shown as horizontal pill nav on desktop (matches THUNDER design).
   const primaryNav = nav.filter((n) =>
-    ["/", "/games", "/apps", "/quests", "/leaderboard", "/settings"].includes(n.to)
+    ["/", "/games", "/apps", "/tools", "/settings"].includes(n.to)
   );
   return (
   <header className="flex items-center justify-between gap-6">
