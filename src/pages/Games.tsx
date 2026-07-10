@@ -2,17 +2,17 @@ import { useEffect, useMemo, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { getLiveConfig } from "@/lib/lightning";
 import { Header } from "@/components/lightning/Header";
-import { GameCard } from "@/components/lightning/GameCard";
+import { AppTile } from "@/components/lightning/AppTile";
+import { CategoryRow } from "@/components/lightning/CategoryRow";
 import { GameFrame } from "@/components/lightning/GameFrame";
-import { loadSettings } from "@/pages/Settings";
 import { Search } from "lucide-react";
 import type { Game } from "@/config/lightning.config";
+import { pushRecent } from "@/pages/Index";
 
 const Games = () => {
   const config = useMemo(() => getLiveConfig(), []);
   const [query, setQuery] = useState("");
   const [active, setActive] = useState<Game | null>(null);
-  const settings = loadSettings();
 
   useEffect(() => {
     document.title = `games · ${config.siteName}`;
@@ -36,63 +36,76 @@ const Games = () => {
   }
 
   const games = config.games.filter((g) => g.category !== "app");
-  const filtered = games.filter((g) => {
-    const q = query.trim().toLowerCase();
-    if (!q) return true;
-    return (
-      g.name.toLowerCase().includes(q) ||
-      g.description.toLowerCase().includes(q) ||
-      (g.tag ?? "").toLowerCase().includes(q)
+  const open = (g: Game) => { pushRecent(g.id); setActive(g); };
+
+  const q = query.trim().toLowerCase();
+  if (q) {
+    const filtered = games.filter(
+      (g) => g.name.toLowerCase().includes(q) || (g.tag ?? "").toLowerCase().includes(q)
     );
-  });
+    return (
+      <div className="min-h-screen bg-topo">
+        <div className="w-full px-4 md:px-10 py-8 md:py-10">
+          <Header siteName={config.siteName} version={config.version} nav={config.nav} />
+          <main className="pt-8 md:pt-12">
+            <SearchBar value={query} onChange={setQuery} />
+            <div className="mt-6 grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-7 xl:grid-cols-8 gap-3 md:gap-4">
+              {filtered.map((g) => <AppTile key={g.id} game={g} onOpen={open} />)}
+            </div>
+          </main>
+        </div>
+        {active && <GameFrame game={active} onClose={() => setActive(null)} />}
+      </div>
+    );
+  }
+
+  const favourites = games.slice(0, 6);
+  const trending = games.slice(0, Math.min(12, games.length));
+  const newer = games.filter((g) => g.tag === "new");
 
   return (
     <div className="min-h-screen bg-topo">
       <div className="w-full px-4 md:px-10 py-8 md:py-10">
         <Header siteName={config.siteName} version={config.version} nav={config.nav} />
 
-        <main className="pt-10 md:pt-14">
-          <div className="mb-8 flex flex-col gap-5">
-            <div>
-              <div className="mb-2 font-mono text-[11px] uppercase tracking-[0.2em] text-primary">
-                ◆ {filtered.length} of {games.length}
-              </div>
-              <h1 className="text-5xl md:text-6xl font-bold tracking-tighter">
-                <span className="bg-gradient-to-b from-primary to-primary/60 bg-clip-text text-transparent">
-                  games
-                </span>
-              </h1>
-            </div>
-            <div className="relative max-w-md">
-              <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <input
-                type="search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="search games..."
-                className="w-full rounded-full border border-border bg-card/60 py-2.5 pl-10 pr-4 text-sm outline-none backdrop-blur transition-colors placeholder:text-muted-foreground focus:border-primary/50"
-              />
-            </div>
-          </div>
+        <main className="pt-8 md:pt-12">
+          <SearchBar value={query} onChange={setQuery} />
 
-          {filtered.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-border p-12 text-center text-muted-foreground">
-              {games.length === 0
-                ? <>No games yet. Add some in <code className="font-mono text-primary">src/config/lightning.config.ts</code></>
-                : <>No games match "<span className="text-foreground">{query}</span>".</>}
-            </div>
-          ) : (
-            <div className={`grid gap-4 ${settings.compactCards ? "grid-cols-3 sm:grid-cols-5 lg:grid-cols-7 xl:grid-cols-8" : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6"}`}>
-              {filtered.map((g, i) => (
-                <GameCard key={g.id} game={g} index={i} onOpen={setActive} />
+          <div className="mt-8">
+            <CategoryRow title="The team's favourites">
+              {favourites.map((g, i) => (
+                <AppTile key={g.id} game={g} size="lg" onOpen={open} label={i === 0 ? g.name : undefined} />
               ))}
-            </div>
-          )}
+            </CategoryRow>
+
+            <CategoryRow title="Trending">
+              {trending.map((g) => <AppTile key={g.id} game={g} size="lg" onOpen={open} />)}
+            </CategoryRow>
+
+            {newer.length > 0 && (
+              <CategoryRow title="New">
+                {newer.map((g) => <AppTile key={g.id} game={g} size="lg" onOpen={open} />)}
+              </CategoryRow>
+            )}
+          </div>
         </main>
       </div>
       {active && <GameFrame game={active} onClose={() => setActive(null)} />}
     </div>
   );
 };
+
+const SearchBar = ({ value, onChange }: { value: string; onChange: (v: string) => void }) => (
+  <div className="relative max-w-md">
+    <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+    <input
+      type="search"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder="Search…"
+      className="w-full rounded-full border border-border bg-secondary/50 py-3 pl-11 pr-4 text-sm outline-none backdrop-blur placeholder:text-muted-foreground focus:border-primary/50"
+    />
+  </div>
+);
 
 export default Games;
