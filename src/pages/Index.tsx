@@ -25,10 +25,11 @@ const Index = () => {
       <main className="flex flex-1 items-center justify-center px-6 pb-24">
         <section className="-mt-16 flex flex-col items-center text-center">
           {!settings.hideClock && <Clock />}
-          <h1 className="mt-10 text-6xl md:text-8xl font-bold tracking-tighter text-balance">
-            <span className="bg-gradient-to-b from-primary to-primary/50 bg-clip-text text-transparent">
-              {config.siteName}
-            </span>
+          <p className="mt-10 text-2xl md:text-4xl font-medium tracking-tight text-foreground/80">
+            Welcome to
+          </p>
+          <h1 className="mt-2 text-6xl md:text-8xl font-extrabold tracking-tighter text-balance text-foreground">
+            {config.siteName}!
           </h1>
           {!settings.pauseQuotes && (
             <div className="mt-5">

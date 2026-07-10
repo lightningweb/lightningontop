@@ -34,15 +34,40 @@ export const Header = ({
   const { user, profile, signOut } = useAuth();
   const xp = profile?.xp ?? 0;
   const lvl = user ? levelForXp(xp) : 0;
+  // Primary nav shown as horizontal pill nav on desktop (matches THUNDER design).
+  const primaryNav = nav.filter((n) =>
+    ["/", "/games", "/apps", "/quests", "/leaderboard", "/settings"].includes(n.to)
+  );
   return (
   <header className="flex items-center justify-between gap-6">
     <Link to="/" className="group flex items-center gap-2.5">
-      <span className="grid h-8 w-8 place-items-center rounded-lg border border-border bg-secondary/60 text-primary transition-colors group-hover:border-primary/50">
-        <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current"><path d="M13 2L3 14h7l-1 8 11-14h-7l1-6z"/></svg>
+      <span className="grid h-9 w-9 place-items-center text-foreground transition-transform group-hover:scale-110">
+        <svg viewBox="0 0 24 24" className="h-6 w-6 fill-current"><path d="M13 2L3 14h7l-1 8 11-14h-7l1-6z"/></svg>
       </span>
-      <span className="text-sm font-semibold tracking-tight text-primary">{siteName}</span>
-      <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{version}</span>
+      <span className="hidden sm:inline text-sm font-bold tracking-tight text-foreground">{siteName}</span>
+      {version && (
+        <span className="hidden md:inline font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{version}</span>
+      )}
     </Link>
+    <nav className="hidden md:flex items-center gap-1 rounded-full bg-secondary/40 p-1 backdrop-blur">
+      {primaryNav.map((item) => (
+        <NavLink
+          key={item.to}
+          to={item.to}
+          end={item.to === "/"}
+          className={({ isActive }) =>
+            cn(
+              "rounded-full px-4 py-1.5 text-sm font-semibold capitalize transition-colors",
+              isActive
+                ? "bg-primary text-primary-foreground shadow-soft"
+                : "text-foreground/80 hover:text-foreground"
+            )
+          }
+        >
+          {item.label}
+        </NavLink>
+      ))}
+    </nav>
     <div className="flex items-center gap-2">
       {user && <NotificationsBell />}
       {user ? (
