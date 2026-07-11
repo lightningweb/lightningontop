@@ -44,7 +44,7 @@ const Apps = () => {
   const trendIds = trending(ids);
   const freshIds = fresh(ids);
   const favouritesRow = favIds.length ? pick(favIds).slice(0, 6) : apps.slice(0, 6);
-  const trendingRow = trendIds.length ? pick(trendIds).slice(0, 12) : apps.slice(0, 12);
+  const trendingRow = pick(trendIds).slice(0, 12);
   const newRow = freshIds.length ? pick(freshIds) : apps.filter((a) => a.tag === "new");
 
   return (
