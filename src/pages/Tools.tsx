@@ -3,24 +3,46 @@ import { Navigate } from "react-router-dom";
 import { getLiveConfig } from "@/lib/lightning";
 import { Header } from "@/components/lightning/Header";
 import { CategoryRow } from "@/components/lightning/CategoryRow";
-import { Wrench, Calculator, Timer, StickyNote, Clock, Palette } from "lucide-react";
+import {
+  Wrench, Calculator, Timer, StickyNote, Clock, Palette,
+  Ruler, Globe, Calendar, ListTodo, Coins, Languages,
+  QrCode, KeyRound, Music, PenTool, Camera, Book,
+} from "lucide-react";
 
-const TOOLS = [
-  { name: "Calculator", icon: Calculator, color: "220 30% 30%" },
-  { name: "Timer", icon: Timer, color: "220 30% 30%" },
-  { name: "Notes", icon: StickyNote, color: "220 30% 30%" },
-  { name: "Clock", icon: Clock, color: "220 30% 30%" },
-  { name: "Palette", icon: Palette, color: "220 30% 30%" },
-  { name: "Utility", icon: Wrench, color: "220 30% 30%" },
+type Tool = { name: string; icon: any; topic: string };
+const TOOLS: Tool[] = [
+  { name: "Calculator", icon: Calculator, topic: "Productivity" },
+  { name: "Timer", icon: Timer, topic: "Productivity" },
+  { name: "Notes", icon: StickyNote, topic: "Productivity" },
+  { name: "Clock", icon: Clock, topic: "Productivity" },
+  { name: "Todo", icon: ListTodo, topic: "Productivity" },
+  { name: "Calendar", icon: Calendar, topic: "Productivity" },
+  { name: "Palette", icon: Palette, topic: "Creative" },
+  { name: "Draw", icon: PenTool, topic: "Creative" },
+  { name: "Camera", icon: Camera, topic: "Creative" },
+  { name: "Music", icon: Music, topic: "Creative" },
+  { name: "Ruler", icon: Ruler, topic: "Utility" },
+  { name: "Globe", icon: Globe, topic: "Utility" },
+  { name: "Coins", icon: Coins, topic: "Utility" },
+  { name: "Translate", icon: Languages, topic: "Utility" },
+  { name: "QR", icon: QrCode, topic: "Utility" },
+  { name: "Password", icon: KeyRound, topic: "Utility" },
+  { name: "Read", icon: Book, topic: "Utility" },
+  { name: "Misc", icon: Wrench, topic: "Utility" },
 ];
 
-const Tile = ({ label, Icon }: { label: string; Icon: typeof Wrench }) => (
-  <div
+const Tile = ({ label, Icon }: { label: string; Icon: any }) => (
+  <button
+    type="button"
     title={label}
-    className="grid h-24 w-24 shrink-0 place-items-center rounded-[22px] bg-secondary shadow-soft transition-transform hover:-translate-y-0.5"
+    aria-label={label}
+    className="group relative grid h-24 w-24 shrink-0 place-items-center overflow-hidden rounded-[22px] bg-secondary shadow-soft transition-transform hover:-translate-y-0.5"
   >
-    <Icon className="h-10 w-10 text-foreground" />
-  </div>
+    <Icon className="h-10 w-10 text-foreground transition-opacity group-hover:opacity-40" />
+    <span className="pointer-events-none absolute inset-x-0 bottom-1.5 px-2 text-center text-[11px] font-semibold text-foreground opacity-0 transition-opacity group-hover:opacity-100">
+      {label}
+    </span>
+  </button>
 );
 
 const Tools = () => {
@@ -34,13 +56,17 @@ const Tools = () => {
         <Header siteName={config.siteName} version={config.version} nav={config.nav} />
         <main className="pt-8 md:pt-12">
           <CategoryRow title="The team's favourites">
-            {TOOLS.slice(0, 4).map((t) => <Tile key={t.name} label={t.name} Icon={t.icon} />)}
+            {TOOLS.slice(0, 6).map((t) => <Tile key={t.name} label={t.name} Icon={t.icon} />)}
           </CategoryRow>
-          <CategoryRow title="Trending">
+          {["Productivity", "Creative", "Utility"].map((topic) => (
+            <CategoryRow key={topic} title={topic}>
+              {TOOLS.filter((t) => t.topic === topic).map((t) => (
+                <Tile key={t.name} label={t.name} Icon={t.icon} />
+              ))}
+            </CategoryRow>
+          ))}
+          <CategoryRow title="All tools">
             {TOOLS.map((t) => <Tile key={t.name} label={t.name} Icon={t.icon} />)}
-          </CategoryRow>
-          <CategoryRow title="New">
-            {TOOLS.slice(-3).map((t) => <Tile key={t.name} label={t.name} Icon={t.icon} />)}
           </CategoryRow>
         </main>
       </div>
