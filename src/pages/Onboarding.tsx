@@ -19,7 +19,7 @@ const THEMES: { id: string; label: string; from: string; to: string }[] = [
   { id: "sea",     label: "Sea",     from: "#3fc0d0", to: "#0b4b70" },
   { id: "violet",  label: "Violet",  from: "#c47bff", to: "#4a1a86" },
   { id: "slate",   label: "Slate",   from: "#5b6472", to: "#232830" },
-};
+];
 
 const Shell = ({ children }: { children: React.ReactNode }) => (
   <div className="fixed inset-0 z-[9999] bg-topo animate-fade-in-up">
