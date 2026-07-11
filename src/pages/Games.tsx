@@ -8,6 +8,16 @@ import { GameFrame } from "@/components/lightning/GameFrame";
 import { Search } from "lucide-react";
 import type { Game } from "@/config/lightning.config";
 import { pushRecent } from "@/pages/Index";
+import { trending, fresh, favourites, seedFirstSeen } from "@/lib/tracking";
+
+/** Loose topic tags inferred from game name/id. */
+const TOPICS: { title: string; match: RegExp }[] = [
+  { title: "Racing & Driving", match: /(drive|drift|slope|snow|tanuki|polytrack|tunnel|space wave|eggy)/i },
+  { title: "Action & Shooters", match: /(ultrakill|gun|iron lung|hollow|granny|crazy cattle|cluster)/i },
+  { title: "Puzzle & Arcade", match: /(tomb|stacktris|geometry|idle|balatro|level devil|tag|monkey)/i },
+  { title: "Sports", match: /(retro bowl|gladi)/i },
+  { title: "Sandbox & Sim", match: /(minecraft|roblox|bitlife|tomodachi|gta|fnf)/i },
+];
 
 const Games = () => {
   const config = useMemo(() => getLiveConfig(), []);
@@ -37,6 +47,21 @@ const Games = () => {
 
   const games = config.games.filter((g) => g.category !== "app");
   const open = (g: Game) => { pushRecent(g.id); setActive(g); };
+  const ids = games.map((g) => g.id);
+  seedFirstSeen(ids);
+  const byId = new Map(games.map((g) => [g.id, g]));
+  const pick = (list: string[]) => list.map((id) => byId.get(id)).filter(Boolean) as Game[];
+
+  const favIds = favourites(ids);
+  const trendIds = trending(ids);
+  const freshIds = fresh(ids);
+
+  // Fall back if no play history yet — show a hand-picked slice.
+  const favouritesRow = favIds.length ? pick(favIds).slice(0, 6) : games.slice(0, 6);
+  const trendingRow = trendIds.length ? pick(trendIds).slice(0, 12) : games.slice(2, 12);
+  const newRow = freshIds.length
+    ? pick(freshIds)
+    : games.filter((g) => g.tag === "new");
 
   const q = query.trim().toLowerCase();
   if (q) {
@@ -59,10 +84,6 @@ const Games = () => {
     );
   }
 
-  const favourites = games.slice(0, 6);
-  const trending = games.slice(0, Math.min(12, games.length));
-  const newer = games.filter((g) => g.tag === "new");
-
   return (
     <div className="min-h-screen bg-topo">
       <div className="w-full px-4 md:px-10 py-8 md:py-10">
@@ -73,20 +94,36 @@ const Games = () => {
 
           <div className="mt-8">
             <CategoryRow title="The team's favourites">
-              {favourites.map((g, i) => (
+              {favouritesRow.map((g, i) => (
                 <AppTile key={g.id} game={g} size="lg" onOpen={open} label={i === 0 ? g.name : undefined} />
               ))}
             </CategoryRow>
 
-            <CategoryRow title="Trending">
-              {trending.map((g) => <AppTile key={g.id} game={g} size="lg" onOpen={open} />)}
-            </CategoryRow>
-
-            {newer.length > 0 && (
-              <CategoryRow title="New">
-                {newer.map((g) => <AppTile key={g.id} game={g} size="lg" onOpen={open} />)}
+            {trendingRow.length > 0 && (
+              <CategoryRow title="Trending">
+                {trendingRow.map((g) => <AppTile key={g.id} game={g} size="lg" onOpen={open} />)}
               </CategoryRow>
             )}
+
+            {newRow.length > 0 && (
+              <CategoryRow title="New">
+                {newRow.map((g) => <AppTile key={g.id} game={g} size="lg" onOpen={open} />)}
+              </CategoryRow>
+            )}
+
+            {TOPICS.map((t) => {
+              const list = games.filter((g) => t.match.test(g.name) || t.match.test(g.id));
+              if (!list.length) return null;
+              return (
+                <CategoryRow key={t.title} title={t.title}>
+                  {list.map((g) => <AppTile key={g.id} game={g} size="lg" onOpen={open} />)}
+                </CategoryRow>
+              );
+            })}
+
+            <CategoryRow title="All games">
+              {games.map((g) => <AppTile key={g.id} game={g} size="lg" onOpen={open} />)}
+            </CategoryRow>
           </div>
         </main>
       </div>
