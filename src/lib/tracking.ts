@@ -44,10 +44,13 @@ export function trending(ids: string[], windowMs = 7 * 24 * 3600 * 1000): string
 }
 
 /** Ids seen for the first time in the last `windowMs` ms — "really new". */
-export function fresh(ids: string[], windowMs = 14 * 24 * 3600 * 1000): string[] {
+export function fresh(ids: string[], windowMs = 7 * 24 * 3600 * 1000): string[] {
   const seen = seedFirstSeen(ids);
   const cutoff = Date.now() - windowMs;
-  return ids.filter((id) => (seen[id] ?? 0) >= cutoff);
+  const hits = ids.filter((id) => (seen[id] ?? 0) >= cutoff);
+  // If everything is "fresh" it's a first-run bulk seed, not real signal.
+  if (hits.length >= ids.length * 0.5) return [];
+  return hits;
 }
 
 /** Favourites = top played all-time. */
