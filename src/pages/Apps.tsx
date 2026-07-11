@@ -7,6 +7,7 @@ import { CategoryRow } from "@/components/lightning/CategoryRow";
 import { GameFrame } from "@/components/lightning/GameFrame";
 import type { Game } from "@/config/lightning.config";
 import { pushRecent } from "@/pages/Index";
+import { trending, fresh, favourites, seedFirstSeen } from "@/lib/tracking";
 
 const Apps = () => {
   const config = useMemo(() => getLiveConfig(), []);
@@ -35,9 +36,16 @@ const Apps = () => {
 
   const apps = config.games.filter((g) => g.category === "app");
   const open = (g: Game) => { pushRecent(g.id); setActive(g); };
-  const favourites = apps.slice(0, 6);
-  const trending = apps.slice(0, Math.min(12, apps.length));
-  const newer = apps.filter((g) => g.tag === "new");
+  const ids = apps.map((a) => a.id);
+  seedFirstSeen(ids);
+  const byId = new Map(apps.map((a) => [a.id, a]));
+  const pick = (l: string[]) => l.map((i) => byId.get(i)).filter(Boolean) as Game[];
+  const favIds = favourites(ids);
+  const trendIds = trending(ids);
+  const freshIds = fresh(ids);
+  const favouritesRow = favIds.length ? pick(favIds).slice(0, 6) : apps.slice(0, 6);
+  const trendingRow = trendIds.length ? pick(trendIds).slice(0, 12) : apps.slice(0, 12);
+  const newRow = freshIds.length ? pick(freshIds) : apps.filter((a) => a.tag === "new");
 
   return (
     <div className="min-h-screen bg-topo">
@@ -52,18 +60,23 @@ const Apps = () => {
           ) : (
             <>
               <CategoryRow title="The team's favourites">
-                {favourites.map((g, i) => (
+                {favouritesRow.map((g, i) => (
                   <AppTile key={g.id} game={g} size="lg" onOpen={open} label={i === 0 ? g.name : undefined} />
                 ))}
               </CategoryRow>
-              <CategoryRow title="Trending">
-                {trending.map((g) => <AppTile key={g.id} game={g} size="lg" onOpen={open} />)}
-              </CategoryRow>
-              {newer.length > 0 && (
-                <CategoryRow title="New">
-                  {newer.map((g) => <AppTile key={g.id} game={g} size="lg" onOpen={open} />)}
+              {trendingRow.length > 0 && (
+                <CategoryRow title="Trending">
+                  {trendingRow.map((g) => <AppTile key={g.id} game={g} size="lg" onOpen={open} />)}
                 </CategoryRow>
               )}
+              {newRow.length > 0 && (
+                <CategoryRow title="New">
+                  {newRow.map((g) => <AppTile key={g.id} game={g} size="lg" onOpen={open} />)}
+                </CategoryRow>
+              )}
+              <CategoryRow title="All apps">
+                {apps.map((g) => <AppTile key={g.id} game={g} size="lg" onOpen={open} />)}
+              </CategoryRow>
             </>
           )}
         </main>
