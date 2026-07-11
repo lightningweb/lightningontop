@@ -22,7 +22,7 @@ const THEMES: { id: string; label: string; from: string; to: string }[] = [
 ];
 
 const Shell = ({ children }: { children: React.ReactNode }) => (
-  <div className="fixed inset-0 z-[9999] bg-topo animate-fade-in-up">
+  <div className="fixed inset-0 z-[9999] bg-background animate-fade-in-up" style={{ backgroundImage: "var(--gradient-bg)" }}>
     <div className="min-h-screen w-full grid place-items-center px-6">
       <div className="w-full max-w-xl text-center">
         <div className="mx-auto mb-6 grid h-12 w-12 place-items-center text-foreground">
