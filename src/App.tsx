@@ -16,8 +16,21 @@ import Messages from "./pages/Messages.tsx";
 import Quests from "./pages/Quests.tsx";
 import Leaderboard from "./pages/Leaderboard.tsx";
 import { AuthProvider } from "./hooks/useAuth";
+import { useEffect, useState } from "react";
+import { Onboarding, needsOnboarding } from "./pages/Onboarding.tsx";
 
 const queryClient = new QueryClient();
+
+const AppGate = ({ children }: { children: React.ReactNode }) => {
+  const [show, setShow] = useState<boolean>(false);
+  useEffect(() => { setShow(needsOnboarding()); }, []);
+  return (
+    <>
+      {children}
+      {show && <Onboarding onDone={() => setShow(false)} />}
+    </>
+  );
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -26,6 +39,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter basename={import.meta.env.BASE_URL}>
         <AuthProvider>
+        <AppGate>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/games" element={<Games />} />
@@ -41,6 +55,7 @@ const App = () => (
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        </AppGate>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

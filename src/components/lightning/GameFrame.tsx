@@ -2,11 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { X, Maximize2, Minimize2 } from "lucide-react";
 import type { Game } from "@/config/lightning.config";
 import { useActivityTracker } from "@/hooks/useActivityTracker";
+import { recordPlay } from "@/lib/tracking";
 
 export const GameFrame = ({ game, onClose }: { game: Game; onClose: () => void }) => {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [isFs, setIsFs] = useState(false);
   useActivityTracker(game.id);
+
+  useEffect(() => { recordPlay(game.id); }, [game.id]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && !document.fullscreenElement && onClose();
