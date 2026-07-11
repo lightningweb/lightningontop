@@ -64,6 +64,20 @@ export const Onboarding = ({ onDone }: { onDone: () => void }) => {
     document.title = `welcome · ${config.siteName}`;
   }, [config.siteName]);
 
+  useEffect(() => {
+    if (step === 5) {
+      const t = setTimeout(() => {
+        try {
+          localStorage.setItem(ONB_KEY, "1");
+          localStorage.setItem("thunder.theme.v1", theme);
+          if (name) localStorage.setItem("thunder.display_name", name);
+        } catch {}
+        onDone();
+      }, 1400);
+      return () => clearTimeout(t);
+    }
+  }, [step, theme, name, onDone]);
+
   const finish = () => {
     try {
       localStorage.setItem(ONB_KEY, "1");
@@ -153,12 +167,6 @@ export const Onboarding = ({ onDone }: { onDone: () => void }) => {
   );
 
   // Step 5: final marker
-  useEffect(() => {
-    if (step === 5) {
-      const t = setTimeout(finish, 1400);
-      return () => clearTimeout(t);
-    }
-  }, [step]);
   return (
     <Shell>
       <h1 className="mt-6 text-5xl md:text-6xl font-extrabold tracking-tight text-foreground animate-fade-in-up">
