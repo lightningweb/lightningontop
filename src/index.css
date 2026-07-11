@@ -129,7 +129,8 @@ All colors MUST be HSL.
   }
 
   h1, h2, h3, h4 {
-    font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
+    letter-spacing: -0.02em;
   }
 
   .text-balance { text-wrap: balance; }
