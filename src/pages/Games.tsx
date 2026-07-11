@@ -58,10 +58,9 @@ const Games = () => {
 
   // Fall back if no play history yet — show a hand-picked slice.
   const favouritesRow = favIds.length ? pick(favIds).slice(0, 6) : games.slice(0, 6);
-  const trendingRow = trendIds.length ? pick(trendIds).slice(0, 12) : games.slice(2, 12);
-  const newRow = freshIds.length
-    ? pick(freshIds)
-    : games.filter((g) => g.tag === "new");
+  const trendingRow = pick(trendIds).slice(0, 12); // only shown when real
+  const tagNew = games.filter((g) => g.tag === "new");
+  const newRow = freshIds.length ? pick(freshIds) : tagNew;
 
   const q = query.trim().toLowerCase();
   if (q) {
