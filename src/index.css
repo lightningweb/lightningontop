@@ -7,6 +7,9 @@ All colors MUST be HSL.
 */
 
 @layer base {
+  #lovable-badge {
+    display: none !important;
+  }
   :root {
     /* THUNDER — slate, minimal, white accent */
     --background: 220 10% 18%;
