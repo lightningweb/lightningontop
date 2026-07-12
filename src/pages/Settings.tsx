@@ -8,7 +8,7 @@ import { toast } from "@/hooks/use-toast";
 
 const SETTINGS_KEY = "lightning.user.settings.v1";
 const AVATAR_KEY = "thunder.avatar.v1";
-const AVATAR_PRESETS = ["😁", "🤣", "😎", "😶", "🙃", "🤠", "💀", "🤩"];
+const AVATAR_PRESETS = [":)", ":D", ":(", ":P", "XD", ":O"];
 
 type UserSettings = {
   theme: "dark" | "light" | "system";
@@ -16,7 +16,7 @@ type UserSettings = {
 };
 
 const DEFAULTS: UserSettings = {
-  theme: "system",
+  theme: "dark",
   reducedMotion: false,
 };
 
