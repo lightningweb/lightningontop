@@ -35,10 +35,10 @@ export const BanScreen = ({
           <Ban className="h-8 w-8" />
         </div>
         <h1 className="text-3xl font-semibold tracking-tight text-destructive">
-          {isPerm ? "Permanently banned" : "Account suspended"}
+          {isPerm ? "Bye bye bye 👋" : "Account suspended"}
         </h1>
         <p className="mt-3 text-sm text-muted-foreground">
-          You can't use lightning while this account is banned.
+          You can't use THUNDER while this account is banned.
         </p>
         {reason && (
           <div className="mt-6 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-left">
@@ -58,7 +58,7 @@ export const BanScreen = ({
         )}
         {isPerm && (
           <div className="mt-6 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
-            this ban will not expire
+            this ban will not expire unless you persuade an admin to unban you.
           </div>
         )}
       </div>
