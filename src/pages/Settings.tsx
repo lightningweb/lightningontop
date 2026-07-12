@@ -7,21 +7,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
 const SETTINGS_KEY = "lightning.user.settings.v1";
+const AVATAR_KEY = "thunder.avatar.v1";
+const AVATAR_PRESETS = ["⚡", "🔥", "🎮", "👾", "🚀", "🌈", "🦊", "🐉", "🐱", "🐼", "🌙", "⭐", "🍕", "🎧", "💎", "👑"];
 
 type UserSettings = {
   theme: "dark" | "light" | "system";
   reducedMotion: boolean;
-  pauseQuotes: boolean;
-  hideClock: boolean;
-  compactCards: boolean;
 };
 
 const DEFAULTS: UserSettings = {
-  theme: "dark",
+  theme: "system",
   reducedMotion: false,
-  pauseQuotes: false,
-  hideClock: false,
-  compactCards: false,
 };
 
 export function loadSettings(): UserSettings {
@@ -35,6 +31,7 @@ export function loadSettings(): UserSettings {
 }
 
 export function applySettings(s: UserSettings) {
+  if (typeof document === "undefined") return;
   const root = document.documentElement;
   const prefersLight =
     s.theme === "light" ||
@@ -44,12 +41,35 @@ export function applySettings(s: UserSettings) {
   root.dataset.reducedMotion = s.reducedMotion ? "1" : "0";
 }
 
+// Live-follow the system theme when set to "system".
+let sysMql: MediaQueryList | null = null;
+let sysHandler: (() => void) | null = null;
+export function watchSystemTheme() {
+  if (typeof window === "undefined") return;
+  if (sysMql && sysHandler) sysMql.removeEventListener("change", sysHandler);
+  sysMql = window.matchMedia("(prefers-color-scheme: light)");
+  sysHandler = () => {
+    const s = loadSettings();
+    if (s.theme === "system") applySettings(s);
+  };
+  sysMql.addEventListener("change", sysHandler);
+}
+
 const Settings = () => {
   const config = getLiveConfig();
   const [settings, setSettings] = useState<UserSettings>(loadSettings());
   const { user, profile } = useAuth();
   const [displayName, setDisplayName] = useState("");
   const [savingAcct, setSavingAcct] = useState(false);
+  const [avatar, setAvatar] = useState<string>(() => {
+    try { return localStorage.getItem(AVATAR_KEY) || "⚡"; } catch { return "⚡"; }
+  });
+
+  const chooseAvatar = (a: string) => {
+    setAvatar(a);
+    try { localStorage.setItem(AVATAR_KEY, a); } catch {}
+    window.dispatchEvent(new Event("thunder-avatar-change"));
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -124,6 +144,32 @@ const Settings = () => {
           </div>
 
           <section className="mb-6 rounded-2xl border border-border bg-card/40 p-6 backdrop-blur space-y-4">
+            <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-primary">◆ profile picture</div>
+            <div className="flex items-center gap-4">
+              <div className="grid h-14 w-14 place-items-center overflow-hidden rounded-full border border-border bg-secondary text-2xl">
+                {avatar.startsWith("http") ? <img src={avatar} alt="" className="h-full w-full object-cover" /> : avatar}
+              </div>
+              <div className="text-xs text-muted-foreground">Pick an emoji or paste an image URL. Shown in the top-right of every page.</div>
+            </div>
+            <div className="grid grid-cols-8 gap-2">
+              {AVATAR_PRESETS.map((a) => (
+                <button
+                  key={a}
+                  onClick={() => chooseAvatar(a)}
+                  className={`grid h-10 w-10 place-items-center rounded-full border text-xl transition-colors ${avatar === a ? "border-primary bg-primary/10" : "border-border bg-secondary/60 hover:bg-secondary"}`}
+                >
+                  {a}
+                </button>
+              ))}
+            </div>
+            <input
+              placeholder="…or paste an image URL"
+              onChange={(e) => e.target.value && chooseAvatar(e.target.value.trim())}
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary/60"
+            />
+          </section>
+
+          <section className="mb-6 rounded-2xl border border-border bg-card/40 p-6 backdrop-blur space-y-4">
             <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-primary">◆ account</div>
             {user ? (
               <>
@@ -187,24 +233,6 @@ const Settings = () => {
               desc="disable card hovers and quote fades"
               checked={settings.reducedMotion}
               onChange={() => setSettings({ ...settings, reducedMotion: !settings.reducedMotion })}
-            />
-            <Toggle
-              label="pause quotes"
-              desc="stop the rotating quote under the logo"
-              checked={settings.pauseQuotes}
-              onChange={() => setSettings({ ...settings, pauseQuotes: !settings.pauseQuotes })}
-            />
-            <Toggle
-              label="hide clock"
-              desc="hide the clock on the homepage"
-              checked={settings.hideClock}
-              onChange={() => setSettings({ ...settings, hideClock: !settings.hideClock })}
-            />
-            <Toggle
-              label="compact cards"
-              desc="tighter grid for games & apps"
-              checked={settings.compactCards}
-              onChange={() => setSettings({ ...settings, compactCards: !settings.compactCards })}
             />
 
             <div className="pt-2">
