@@ -93,7 +93,7 @@ export const Onboarding = ({ onDone }: { onDone: () => void }) => {
   if (step === 0) return (
     <Shell>
       <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-foreground">Thunder's back!</h1>
-      <p className="mt-3 text-lg text-foreground/80">and it's better than ever.</p>
+      <p className="mt-3 text-lg text-foreground/80">and we're peak again ✌️</p>
       <div className="mt-10 flex items-center justify-center gap-3">
         <Pill variant="ghost" onClick={() => setStep(1)}>What's changed?</Pill>
         <Pill onClick={() => setStep(2)}>Next</Pill>
