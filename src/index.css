@@ -164,17 +164,27 @@ All colors MUST be HSL.
 /* Light theme override (toggled from Settings page) */
 :root.theme-light {
   --background: 45 30% 97%;
-  --foreground: 222 39% 10%;
+  --foreground: 222 30% 12%;
   --card: 0 0% 100%;
-  --card-foreground: 222 39% 10%;
+  --card-foreground: 222 30% 12%;
   --popover: 0 0% 100%;
-  --popover-foreground: 222 39% 10%;
+  --popover-foreground: 222 30% 12%;
+  --primary: 222 30% 14%;
+  --primary-foreground: 0 0% 100%;
   --secondary: 45 20% 92%;
-  --secondary-foreground: 222 39% 10%;
+  --secondary-foreground: 222 30% 12%;
   --muted: 45 15% 90%;
-  --muted-foreground: 222 12% 40%;
-  --border: 45 15% 85%;
-  --input: 45 15% 85%;
+  --muted-foreground: 222 10% 38%;
+  --accent: 220 90% 55%;
+  --accent-foreground: 0 0% 100%;
+  --border: 45 15% 82%;
+  --input: 45 15% 82%;
+  --ring: 222 30% 14%;
+  --surface-1: 0 0% 100%;
+  --surface-2: 45 25% 95%;
+  --surface-3: 45 20% 90%;
+  --gradient-bg: linear-gradient(180deg, hsl(45 30% 99%) 0%, hsl(45 20% 92%) 100%);
+  --shadow-soft: 0 1px 0 0 hsl(0 0% 100% / 0.6) inset, 0 10px 30px -12px hsl(220 40% 20% / 0.15);
 }
 
 /* Reduced motion (toggled from Settings page) */

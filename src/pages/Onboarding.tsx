@@ -52,12 +52,14 @@ const Pill = ({
 
 export const Onboarding = ({ onDone }: { onDone: () => void }) => {
   const [step, setStep] = useState(0);
+  const [mode, setMode] = useState<"signup" | "signin">("signup");
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [pw, setPw] = useState("");
   const [pw2, setPw2] = useState("");
   const [theme, setTheme] = useState<string>("slate");
-  const { user, signUp } = useAuth() as any;
+  const auth = useAuth() as any;
+  const { user } = auth;
   const config = useMemo(() => getLiveConfig(), []);
 
   useEffect(() => {
@@ -116,21 +118,35 @@ export const Onboarding = ({ onDone }: { onDone: () => void }) => {
   if (step === 2) return (
     <Shell>
       <h2 className="text-3xl md:text-4xl font-bold text-foreground">Before we enter…</h2>
-      <p className="mt-2 text-foreground/80">care to make a profile?</p>
-      <div className="mt-8 grid grid-cols-2 gap-3">
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" className="col-span-1 rounded-full bg-secondary/80 px-5 py-3 text-sm text-foreground placeholder:text-foreground/50 outline-none" />
-        <input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" className="col-span-1 rounded-full bg-secondary/80 px-5 py-3 text-sm text-foreground placeholder:text-foreground/50 outline-none" />
+      <p className="mt-2 text-foreground/80">{mode === "signup" ? "care to make a profile?" : "welcome back — sign in."}</p>
+      <div className="mt-4 inline-flex rounded-full bg-secondary/60 p-1 text-xs">
+        <button onClick={() => setMode("signup")} className={`rounded-full px-4 py-1.5 font-semibold ${mode === "signup" ? "bg-primary text-primary-foreground" : "text-foreground/70"}`}>Sign up</button>
+        <button onClick={() => setMode("signin")} className={`rounded-full px-4 py-1.5 font-semibold ${mode === "signin" ? "bg-primary text-primary-foreground" : "text-foreground/70"}`}>Sign in</button>
+      </div>
+      <div className="mt-6 grid grid-cols-2 gap-3">
+        {mode === "signup" && (
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" className="col-span-1 rounded-full bg-secondary/80 px-5 py-3 text-sm text-foreground placeholder:text-foreground/50 outline-none" />
+        )}
+        <input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" className={`${mode === "signup" ? "col-span-1" : "col-span-2"} rounded-full bg-secondary/80 px-5 py-3 text-sm text-foreground placeholder:text-foreground/50 outline-none`} />
         <input type="password" value={pw} onChange={(e) => setPw(e.target.value)} placeholder="Password" className="col-span-2 rounded-full bg-secondary/80 px-5 py-3 text-sm text-foreground placeholder:text-foreground/50 outline-none" />
-        <input type="password" value={pw2} onChange={(e) => setPw2(e.target.value)} placeholder="Confirm Password" className="col-span-2 rounded-full bg-secondary/80 px-5 py-3 text-sm text-foreground placeholder:text-foreground/50 outline-none" />
+        {mode === "signup" && (
+          <input type="password" value={pw2} onChange={(e) => setPw2(e.target.value)} placeholder="Confirm Password" className="col-span-2 rounded-full bg-secondary/80 px-5 py-3 text-sm text-foreground placeholder:text-foreground/50 outline-none" />
+        )}
       </div>
       <div className="mt-8 flex items-center justify-center gap-3">
         <button onClick={() => setStep(3)} className="text-sm text-foreground/60 hover:text-foreground underline">Skip</button>
         <Pill onClick={async () => {
-          if (username && pw && pw === pw2 && signUp) {
-            try { await signUp(`${username}@thunder.local`, pw, name || username); } catch {}
-          }
+          try {
+            const { supabase } = await import("@/integrations/supabase/client");
+            const email = `${username.trim().toLowerCase().replace(/[^a-z0-9_-]/g, "")}@user.lightning.local`;
+            if (mode === "signup" && username && pw && pw === pw2) {
+              await supabase.auth.signUp({ email, password: pw, options: { data: { username: username.trim() }, emailRedirectTo: window.location.origin } });
+            } else if (mode === "signin" && username && pw) {
+              await supabase.auth.signInWithPassword({ email, password: pw });
+            }
+          } catch {}
           setStep(3);
-        }}>Next</Pill>
+        }}>{mode === "signup" ? "Create" : "Sign in"}</Pill>
       </div>
     </Shell>
   );

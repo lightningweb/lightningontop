@@ -60,8 +60,8 @@ const Apps = () => {
           ) : (
             <>
               <CategoryRow title="The team's favourites">
-                {favouritesRow.map((g, i) => (
-                  <AppTile key={g.id} game={g} size="lg" onOpen={open} label={i === 0 ? g.name : undefined} />
+                {favouritesRow.map((g) => (
+                  <AppTile key={g.id} game={g} size="lg" onOpen={open} />
                 ))}
               </CategoryRow>
               {trendingRow.length > 0 && (

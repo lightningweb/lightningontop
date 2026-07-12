@@ -18,12 +18,17 @@ import Leaderboard from "./pages/Leaderboard.tsx";
 import { AuthProvider } from "./hooks/useAuth";
 import { useEffect, useState } from "react";
 import { Onboarding, needsOnboarding } from "./pages/Onboarding.tsx";
+import { applySettings, loadSettings, watchSystemTheme } from "./pages/Settings.tsx";
 
 const queryClient = new QueryClient();
 
 const AppGate = ({ children }: { children: React.ReactNode }) => {
   const [show, setShow] = useState<boolean>(false);
-  useEffect(() => { setShow(needsOnboarding()); }, []);
+  useEffect(() => {
+    setShow(needsOnboarding());
+    applySettings(loadSettings());
+    watchSystemTheme();
+  }, []);
   return (
     <>
       {children}
