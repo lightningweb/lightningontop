@@ -447,3 +447,7 @@ export const config: LightningConfig = {
 
 /** localStorage key — admin overrides persist here so you can tweak from /admin. */
 export const STORAGE_KEY = "lightning.config.overrides.v1";
+
+// Merge the imported catalogue at the end.
+import { IMPORTED_GAMES } from "./games.imported";
+config.games = [...config.games, ...IMPORTED_GAMES];

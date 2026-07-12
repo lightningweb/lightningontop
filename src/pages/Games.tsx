@@ -12,11 +12,18 @@ import { trending, fresh, favourites, seedFirstSeen } from "@/lib/tracking";
 
 /** Loose topic tags inferred from game name/id. */
 const TOPICS: { title: string; match: RegExp }[] = [
-  { title: "Racing & Driving", match: /(drive|drift|slope|snow|tanuki|polytrack|tunnel|space wave|eggy)/i },
-  { title: "Action & Shooters", match: /(ultrakill|gun|iron lung|hollow|granny|crazy cattle|cluster)/i },
-  { title: "Puzzle & Arcade", match: /(tomb|stacktris|geometry|idle|balatro|level devil|tag|monkey)/i },
-  { title: "Sports", match: /(retro bowl|gladi)/i },
-  { title: "Sandbox & Sim", match: /(minecraft|roblox|bitlife|tomodachi|gta|fnf)/i },
+  { title: "Racing & Driving", match: /(drive|drift|race|road|slope|snow|tanuki|polytrack|tunnel|wave|eggy|traffic|highway|moto|bike|kart|parking|truck|taxi)/i },
+  { title: "Action & Shooters", match: /(ultrakill|gun|shoot|sniper|zombie|iron lung|hollow|granny|crazy cattle|cluster|combat|war|strike|kill|hunter|bullet|assault)/i },
+  { title: "Puzzle & Arcade", match: /(tomb|stacktris|geometry|idle|balatro|level devil|tag|monkey|puzzle|match|block|sudoku|tetris|2048|solitaire|mahjong|cube|hex)/i },
+  { title: "Sports", match: /(bowl|gladi|soccer|football|basket|golf|tennis|pool|hockey|baseball|boxing|sport|goal|kick|dunk|wrestl)/i },
+  { title: "Sandbox & Sim", match: /(minecraft|roblox|bitlife|tomodachi|gta|fnf|craft|sim|tycoon|city|farm|life|world|builder)/i },
+  { title: "Adventure & RPG", match: /(zelda|pokemon|mario|adventure|quest|dungeon|knight|witch|hero|kingdom|rpg|fantasy|magic|dragon)/i },
+  { title: "Platformer", match: /(mario|sonic|kirby|platform|jump|run|dash|hopper|climb|stick(?:man)?)/i },
+  { title: "Retro & Classic", match: /(retro|classic|pac|atari|arcade|nes|snes|gba|gameboy|nintendo|wario|zelda|kong|castle)/i },
+  { title: "Multiplayer & .io", match: /(\.io|multiplayer|battle|royale|agar|slither|krunker|shell shock|paper)/i },
+  { title: "Horror & Scary", match: /(horror|scary|granny|slender|five nights|fnaf|zombie|dead|haunted|dark)/i },
+  { title: "Casual & Idle", match: /(idle|clicker|cookie|casual|zen|relax|happy|cute|color|paint|draw)/i },
+  { title: "Strategy & Card", match: /(strategy|chess|checkers|card|poker|balatro|solitaire|tower|defense|td)/i },
 ];
 
 const Games = () => {
@@ -58,7 +65,11 @@ const Games = () => {
 
   // Fall back if no play history yet — show a hand-picked slice.
   const favouritesRow = favIds.length ? pick(favIds).slice(0, 6) : games.slice(0, 6);
-  const trendingRow = pick(trendIds).slice(0, 12); // only shown when real
+  const trendingRow = pick(trendIds).slice(0, 12); // real trending
+  // Fallback so the row always shows something interesting.
+  const trendingDisplay = trendingRow.length
+    ? trendingRow
+    : games.slice().sort(() => Math.random() - 0.5).slice(0, 12);
   const tagNew = games.filter((g) => g.tag === "new");
   const newRow = freshIds.length ? pick(freshIds) : tagNew;
 
@@ -93,16 +104,14 @@ const Games = () => {
 
           <div className="mt-8">
             <CategoryRow title="The team's favourites">
-              {favouritesRow.map((g, i) => (
-                <AppTile key={g.id} game={g} size="lg" onOpen={open} label={i === 0 ? g.name : undefined} />
+              {favouritesRow.map((g) => (
+                <AppTile key={g.id} game={g} size="lg" onOpen={open} />
               ))}
             </CategoryRow>
 
-            {trendingRow.length > 0 && (
-              <CategoryRow title="Trending">
-                {trendingRow.map((g) => <AppTile key={g.id} game={g} size="lg" onOpen={open} />)}
-              </CategoryRow>
-            )}
+            <CategoryRow title="Trending">
+              {trendingDisplay.map((g) => <AppTile key={g.id} game={g} size="lg" onOpen={open} />)}
+            </CategoryRow>
 
             {newRow.length > 0 && (
               <CategoryRow title="New">

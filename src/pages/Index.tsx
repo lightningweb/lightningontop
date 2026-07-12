@@ -29,11 +29,13 @@ const Index = () => {
   if (config.maintenanceMode) return <Navigate to="/maintenance" replace />;
 
   const name = profile?.display_name || profile?.username;
+  const [, force] = useState(0);
   const recentIds = loadRecents();
   const byId = new Map(config.games.map((g) => [g.id, g]));
   const recents = recentIds.map((id) => byId.get(id)).filter(Boolean) as Game[];
   const fallback = config.games.slice(0, 6);
   const showList = recents.length ? recents : fallback;
+  const openGame = (g: Game) => { pushRecent(g.id); setActive(g); force((x) => x + 1); };
 
   return (
     <div className="min-h-screen bg-topo">
@@ -59,7 +61,7 @@ const Index = () => {
           </p>
           <div className="mt-4 flex gap-3 md:gap-4 overflow-x-auto pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {showList.map((g) => (
-              <AppTile key={g.id} game={g} size="lg" onOpen={setActive} />
+              <AppTile key={g.id} game={g} size="lg" onOpen={openGame} />
             ))}
           </div>
         </main>
