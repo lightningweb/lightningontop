@@ -16,7 +16,7 @@ type UserSettings = {
 };
 
 const DEFAULTS: UserSettings = {
-  theme: "dark",
+  theme: "system",
   reducedMotion: false,
 };
 
