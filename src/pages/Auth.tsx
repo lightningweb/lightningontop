@@ -100,7 +100,7 @@ const Auth = () => {
               </span>
             </h1>
             <p className="mt-3 text-sm text-muted-foreground">
-              your saves sync across any pc you sign in on.
+              make an account for messaging, quests and xp.
             </p>
           </div>
           <form
