@@ -56,7 +56,7 @@ export const Header = ({
   const primaryNav = nav.filter((n) => {
     if (seen.has(n.to)) return false;
     seen.add(n.to);
-    return ["/", "/games", "/apps", "/tools", "/quests", "/leaderboard", "/messages", "/settings"].includes(n.to);
+    return ["/", "/games", "/apps", "/tools", "/quests", "/leaderboard", "/messages", "/friends", "/settings"].includes(n.to);
   });
   return (
   <header className="flex items-center justify-between gap-6">
