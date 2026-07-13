@@ -160,9 +160,12 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar: string | null
           ban_reason: string | null
           banned_until: string | null
           created_at: string
+          current_game: string | null
+          current_game_at: string | null
           display_name: string | null
           id: string
           level: number
@@ -172,9 +175,12 @@ export type Database = {
           xp: number
         }
         Insert: {
+          avatar?: string | null
           ban_reason?: string | null
           banned_until?: string | null
           created_at?: string
+          current_game?: string | null
+          current_game_at?: string | null
           display_name?: string | null
           id: string
           level?: number
@@ -184,9 +190,12 @@ export type Database = {
           xp?: number
         }
         Update: {
+          avatar?: string | null
           ban_reason?: string | null
           banned_until?: string | null
           created_at?: string
+          current_game?: string | null
+          current_game_at?: string | null
           display_name?: string | null
           id?: string
           level?: number
