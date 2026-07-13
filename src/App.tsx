@@ -15,6 +15,7 @@ import Auth from "./pages/Auth.tsx";
 import Messages from "./pages/Messages.tsx";
 import Quests from "./pages/Quests.tsx";
 import Leaderboard from "./pages/Leaderboard.tsx";
+import Friends from "./pages/Friends.tsx";
 import { AuthProvider } from "./hooks/useAuth";
 import { useEffect, useState } from "react";
 import { Onboarding, needsOnboarding } from "./pages/Onboarding.tsx";
@@ -53,6 +54,7 @@ const App = () => (
           <Route path="/settings" element={<Settings />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/messages" element={<Messages />} />
+          <Route path="/friends" element={<Friends />} />
           <Route path="/quests" element={<Quests />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/admin" element={<Admin />} />
