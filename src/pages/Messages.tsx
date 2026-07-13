@@ -12,7 +12,7 @@ import { notify } from "@/lib/notifications";
 
 const LIGHTNING_ID = "11111111-1111-1111-1111-111111111111";
 
-type Friend = { id: string; username: string; display_name: string; tag?: string | null };
+type Friend = { id: string; username: string; display_name: string; tag?: string | null; avatar?: string | null };
 type FriendRequest = {
   id: string;
   from_user_id: string;
@@ -59,13 +59,14 @@ const Messages = () => {
       if (!ids.includes(LIGHTNING_ID)) ids.unshift(LIGHTNING_ID);
       const { data: profs } = await supabase
         .from("profiles")
-        .select("id,username,display_name,tag")
+        .select("id,username,display_name,tag,avatar")
         .in("id", ids);
       const list: Friend[] = (profs ?? []).map((p) => ({
         id: p.id,
         username: p.username,
         display_name: p.display_name ?? p.username,
         tag: p.tag,
+        avatar: (p as any).avatar,
       }));
       // Lightning first
       list.sort((a, b) => (a.id === LIGHTNING_ID ? -1 : b.id === LIGHTNING_ID ? 1 : a.username.localeCompare(b.username)));
@@ -350,8 +351,18 @@ const Messages = () => {
                       active === f.id ? "bg-secondary/70" : "hover:bg-secondary/40"
                     }`}
                   >
-                    <span className="grid h-7 w-7 place-items-center rounded-full bg-secondary/60 text-primary">
-                      {f.id === LIGHTNING_ID ? <Zap className="h-3.5 w-3.5" /> : f.display_name.charAt(0).toUpperCase()}
+                    <span className="grid h-7 w-7 place-items-center overflow-hidden rounded-full bg-secondary/60 text-primary text-sm">
+                      {f.avatar ? (
+                        f.avatar.startsWith("http") ? (
+                          <img src={f.avatar} alt="" className="h-full w-full object-cover" />
+                        ) : (
+                          <span>{f.avatar}</span>
+                        )
+                      ) : f.id === LIGHTNING_ID ? (
+                        <Zap className="h-3.5 w-3.5" />
+                      ) : (
+                        f.display_name.charAt(0).toUpperCase()
+                      )}
                     </span>
                     <span className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5 truncate text-sm font-medium">
@@ -382,8 +393,18 @@ const Messages = () => {
               {activeFriend ? (
                 <>
                   <div className="flex items-center gap-2 border-b border-border px-4 py-3">
-                    <span className="grid h-8 w-8 place-items-center rounded-full bg-secondary/60 text-primary">
-                      {activeFriend.id === LIGHTNING_ID ? <Zap className="h-4 w-4" /> : activeFriend.display_name.charAt(0).toUpperCase()}
+                    <span className="grid h-8 w-8 place-items-center overflow-hidden rounded-full bg-secondary/60 text-primary">
+                      {activeFriend.avatar ? (
+                        activeFriend.avatar.startsWith("http") ? (
+                          <img src={activeFriend.avatar} alt="" className="h-full w-full object-cover" />
+                        ) : (
+                          <span>{activeFriend.avatar}</span>
+                        )
+                      ) : activeFriend.id === LIGHTNING_ID ? (
+                        <Zap className="h-4 w-4" />
+                      ) : (
+                        activeFriend.display_name.charAt(0).toUpperCase()
+                      )}
                     </span>
                     <div>
                       <div className="flex items-center gap-1.5 text-sm font-medium">
