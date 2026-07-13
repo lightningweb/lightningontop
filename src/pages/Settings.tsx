@@ -249,6 +249,22 @@ const Settings = () => {
               </div>
             </div>
 
+            <div>
+              <div className="mb-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">accent theme</div>
+              <div className="grid grid-cols-5 gap-3 sm:grid-cols-9">
+                {COLOR_THEMES.map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => chooseColorTheme(t.id)}
+                    title={t.label}
+                    aria-label={t.label}
+                    className={`h-11 w-11 rounded-[40%] transition-transform hover:-translate-y-0.5 ${colorTheme === t.id ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : ""}`}
+                    style={{ backgroundImage: `radial-gradient(circle at 30% 30%, ${t.from}, ${t.to})` }}
+                  />
+                ))}
+              </div>
+            </div>
+
             <Toggle
               label="reduced motion"
               desc="disable card hovers and quote fades"

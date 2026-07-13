@@ -25,7 +25,7 @@ function iconFor(item: NavItem) {
 
 const AVATAR_KEY = "thunder.avatar.v1";
 export function loadAvatar(): string {
-  try { return localStorage.getItem(AVATAR_KEY) || "⚡"; } catch { return "⚡"; }
+  try { return localStorage.getItem(AVATAR_KEY) || ""; } catch { return ""; }
 }
 
 export const Header = ({
@@ -42,15 +42,16 @@ export const Header = ({
   const lvl = user ? levelForXp(xp) : 0;
   const [avatar, setAvatar] = useState<string>("⚡");
   useEffect(() => {
-    setAvatar(loadAvatar());
-    const onStorage = () => setAvatar(loadAvatar());
+    const resolve = () => setAvatar(loadAvatar() || (profile as any)?.avatar || "⚡");
+    resolve();
+    const onStorage = () => resolve();
     window.addEventListener("storage", onStorage);
     window.addEventListener("thunder-avatar-change", onStorage);
     return () => {
       window.removeEventListener("storage", onStorage);
       window.removeEventListener("thunder-avatar-change", onStorage);
     };
-  }, []);
+  }, [profile]);
   // Deduplicate nav (config may have duplicate "friends" -> /messages).
   const seen = new Set<string>();
   const primaryNav = nav.filter((n) => {
