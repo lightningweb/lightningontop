@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Zap } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { getLiveConfig } from "@/lib/lightning";
+import { applyColorTheme, saveColorTheme } from "@/lib/themes";
 
 const ONB_KEY = "thunder.onboarded.v2";
 
@@ -58,6 +59,8 @@ export const Onboarding = ({ onDone }: { onDone: () => void }) => {
   const [pw, setPw] = useState("");
   const [pw2, setPw2] = useState("");
   const [theme, setTheme] = useState<string>("slate");
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
   const auth = useAuth() as any;
   const { user } = auth;
   const config = useMemo(() => getLiveConfig(), []);
@@ -71,7 +74,7 @@ export const Onboarding = ({ onDone }: { onDone: () => void }) => {
       const t = setTimeout(() => {
         try {
           localStorage.setItem(ONB_KEY, "1");
-          localStorage.setItem("thunder.theme.v1", theme);
+          saveColorTheme(theme);
           if (name) localStorage.setItem("thunder.display_name", name);
         } catch {}
         onDone();
@@ -83,7 +86,7 @@ export const Onboarding = ({ onDone }: { onDone: () => void }) => {
   const finish = () => {
     try {
       localStorage.setItem(ONB_KEY, "1");
-      localStorage.setItem("thunder.theme.v1", theme);
+      saveColorTheme(theme);
       if (name) localStorage.setItem("thunder.display_name", name);
     } catch {}
     onDone();
@@ -136,18 +139,44 @@ export const Onboarding = ({ onDone }: { onDone: () => void }) => {
       <div className="mt-8 flex items-center justify-center gap-3">
         <button onClick={() => setStep(3)} className="text-sm text-foreground/60 hover:text-foreground underline">Skip</button>
         <Pill onClick={async () => {
+          setAuthError(null);
+          if (!username.trim() || !pw) {
+            setAuthError("Enter a username and password.");
+            return;
+          }
+          if (mode === "signup" && pw !== pw2) {
+            setAuthError("Passwords don't match.");
+            return;
+          }
+          setBusy(true);
           try {
             const { supabase } = await import("@/integrations/supabase/client");
             const email = `${username.trim().toLowerCase().replace(/[^a-z0-9_-]/g, "")}@user.lightning.local`;
-            if (mode === "signup" && username && pw && pw === pw2) {
-              await supabase.auth.signUp({ email, password: pw, options: { data: { username: username.trim() }, emailRedirectTo: window.location.origin } });
-            } else if (mode === "signin" && username && pw) {
-              await supabase.auth.signInWithPassword({ email, password: pw });
+            if (mode === "signup") {
+              const { error } = await supabase.auth.signUp({ email, password: pw, options: { data: { username: username.trim() }, emailRedirectTo: window.location.origin } });
+              if (error) { setAuthError(error.message); setBusy(false); return; }
+            } else {
+              const { error } = await supabase.auth.signInWithPassword({ email, password: pw });
+              if (error) {
+                setAuthError("Wrong username or password. Try again.");
+                setBusy(false);
+                return;
+              }
             }
-          } catch {}
+          } catch (e: any) {
+            setAuthError(e?.message || "Something went wrong.");
+            setBusy(false);
+            return;
+          }
+          setBusy(false);
           setStep(3);
-        }}>{mode === "signup" ? "Create" : "Sign in"}</Pill>
+        }}>{busy ? "…" : mode === "signup" ? "Create" : "Sign in"}</Pill>
       </div>
+      {authError && (
+        <div className="mt-4 mx-auto max-w-sm rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-2 text-sm text-destructive">
+          {authError}
+        </div>
+      )}
     </Shell>
   );
 
@@ -159,7 +188,7 @@ export const Onboarding = ({ onDone }: { onDone: () => void }) => {
         {THEMES.map((t) => (
           <button
             key={t.id}
-            onClick={() => setTheme(t.id)}
+            onClick={() => { setTheme(t.id); applyColorTheme(t.id); }}
             title={t.label}
             className={`h-16 w-16 rounded-[42%] transition-transform hover:-translate-y-0.5 ${theme === t.id ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : ""}`}
             style={{ backgroundImage: `radial-gradient(circle at 30% 30%, ${t.from}, ${t.to})` }}
