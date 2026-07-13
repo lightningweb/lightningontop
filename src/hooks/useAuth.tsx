@@ -13,6 +13,7 @@ type Profile = {
   tag?: string | null;
   xp?: number | null;
   level?: number | null;
+  avatar?: string | null;
   banned_until?: string | null;
   ban_reason?: string | null;
 };
@@ -74,7 +75,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setTimeout(async () => {
           const { data } = await supabase
             .from("profiles")
-            .select("id,username,display_name,tag,xp,level,banned_until,ban_reason")
+            .select("id,username,display_name,tag,xp,level,avatar,banned_until,ban_reason")
             .eq("id", s.user.id)
             .maybeSingle();
           if (data?.banned_until && new Date(data.banned_until) > new Date()) {
@@ -100,7 +101,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (s?.user) {
         supabase
           .from("profiles")
-          .select("id,username,display_name,tag,xp,level,banned_until,ban_reason")
+          .select("id,username,display_name,tag,xp,level,avatar,banned_until,ban_reason")
           .eq("id", s.user.id)
           .maybeSingle()
           .then(({ data }) => {

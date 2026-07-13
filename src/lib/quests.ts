@@ -16,7 +16,7 @@ export type Quest = {
 
 const DAILY_POOL = [
   { code: "play_games_5", title: "Play 5 different games", target: 5, xp: 80 },
-  { code: "play_lightning_15", title: "Spend 15 minutes on lightning", target: 15, xp: 60 },
+  { code: "play_lightning_15", title: "Spend 15 minutes on Thunder", target: 15, xp: 60 },
   { code: "watch_videos_10", title: "Watch videos for 10 minutes", target: 10, xp: 60 },
   { code: "send_messages_3", title: "Send 3 direct messages", target: 3, xp: 40 },
   { code: "play_minutes_20", title: "Play games for 20 minutes total", target: 20, xp: 70 },
@@ -30,7 +30,7 @@ const WEEKLY_POOL = [
   { code: "play_minutes_120", title: "Play games for 2 hours this week", target: 120, xp: 250 },
   { code: "send_messages_15", title: "Send 15 messages this week", target: 15, xp: 200 },
   { code: "watch_videos_60", title: "Watch videos for an hour this week", target: 60, xp: 250 },
-  { code: "play_lightning_60", title: "Spend an hour on lightning", target: 60, xp: 200 },
+  { code: "play_lightning_60", title: "Spend an hour on Thunder", target: 60, xp: 200 },
 ];
 
 const pickRandom = <T,>(pool: T[], n: number) => {

@@ -108,11 +108,11 @@ export const config: LightningConfig = {
     { label: "games", to: "/games" },
     { label: "apps", to: "/apps" },
     { label: "tools", to: "/tools" },
-    { label: "settings", to: "/settings" },
     { label: "quests", to: "/quests" },
     { label: "leaderboard", to: "/leaderboard" },
     { label: "messages", to: "/messages" },
-    { label: "friends", to: "/messages" },
+    { label: "friends", to: "/friends" },
+    { label: "settings", to: "/settings" },
   ],
 
   games:

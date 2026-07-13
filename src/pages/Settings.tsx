@@ -5,6 +5,7 @@ import { Header } from "@/components/lightning/Header";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { COLOR_THEMES, loadColorTheme, saveColorTheme } from "@/lib/themes";
 
 const SETTINGS_KEY = "lightning.user.settings.v1";
 const AVATAR_KEY = "thunder.avatar.v1";
@@ -64,11 +65,21 @@ const Settings = () => {
   const [avatar, setAvatar] = useState<string>(() => {
     try { return localStorage.getItem(AVATAR_KEY) || "⚡"; } catch { return "⚡"; }
   });
+  const [colorTheme, setColorTheme] = useState<string>(() => loadColorTheme());
 
   const chooseAvatar = (a: string) => {
     setAvatar(a);
     try { localStorage.setItem(AVATAR_KEY, a); } catch {}
     window.dispatchEvent(new Event("thunder-avatar-change"));
+    // Persist so friends can see it.
+    if (user) {
+      supabase.from("profiles").update({ avatar: a }).eq("id", user.id).then(() => {});
+    }
+  };
+
+  const chooseColorTheme = (id: string) => {
+    setColorTheme(id);
+    saveColorTheme(id);
   };
 
   useEffect(() => {
@@ -76,10 +87,20 @@ const Settings = () => {
     (async () => {
       const { data } = await supabase
         .from("profiles")
-        .select("display_name,username")
+        .select("display_name,username,avatar")
         .eq("id", user.id)
         .maybeSingle();
       setDisplayName(data?.display_name ?? data?.username ?? "");
+      // Hydrate avatar from DB if we don't have a local one yet.
+      if (data?.avatar) {
+        try {
+          if (!localStorage.getItem(AVATAR_KEY)) {
+            localStorage.setItem(AVATAR_KEY, data.avatar);
+            setAvatar(data.avatar);
+            window.dispatchEvent(new Event("thunder-avatar-change"));
+          }
+        } catch {}
+      }
     })();
   }, [user]);
 
@@ -224,6 +245,22 @@ const Settings = () => {
                   >
                     {t}
                   </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <div className="mb-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">accent theme</div>
+              <div className="grid grid-cols-5 gap-3 sm:grid-cols-9">
+                {COLOR_THEMES.map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => chooseColorTheme(t.id)}
+                    title={t.label}
+                    aria-label={t.label}
+                    className={`h-11 w-11 rounded-[40%] transition-transform hover:-translate-y-0.5 ${colorTheme === t.id ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : ""}`}
+                    style={{ backgroundImage: `radial-gradient(circle at 30% 30%, ${t.from}, ${t.to})` }}
+                  />
                 ))}
               </div>
             </div>

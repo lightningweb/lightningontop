@@ -3,13 +3,36 @@ import { X, Maximize2, Minimize2 } from "lucide-react";
 import type { Game } from "@/config/lightning.config";
 import { useActivityTracker } from "@/hooks/useActivityTracker";
 import { recordPlay } from "@/lib/tracking";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 export const GameFrame = ({ game, onClose }: { game: Game; onClose: () => void }) => {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [isFs, setIsFs] = useState(false);
+  const { user } = useAuth();
   useActivityTracker(game.id);
 
   useEffect(() => { recordPlay(game.id); }, [game.id]);
+
+  // Presence: mark that this user is currently playing this game.
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("profiles").update({
+      current_game: game.name,
+      current_game_at: new Date().toISOString(),
+    }).eq("id", user.id).then(() => {});
+    const clear = () => {
+      supabase.from("profiles").update({
+        current_game: null,
+        current_game_at: null,
+      }).eq("id", user.id).then(() => {});
+    };
+    window.addEventListener("beforeunload", clear);
+    return () => {
+      window.removeEventListener("beforeunload", clear);
+      clear();
+    };
+  }, [user, game.id, game.name]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && !document.fullscreenElement && onClose();
