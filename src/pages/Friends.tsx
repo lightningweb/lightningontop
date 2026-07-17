@@ -5,7 +5,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { Header } from "@/components/lightning/Header";
 import { getLiveConfig } from "@/lib/lightning";
 import { UserTag } from "@/components/lightning/UserBadge";
-import { Gamepad2, MessageCircle, UserPlus, Zap } from "lucide-react";
+import { Gamepad2, MessageCircle, UserPlus } from "lucide-react";
+import { BoltIcon } from "@/components/lightning/BoltIcon";
 
 const LIGHTNING_ID = "11111111-1111-1111-1111-111111111111";
 
@@ -19,9 +20,11 @@ type Friend = {
   current_game_at?: string | null;
 };
 
-const Avatar = ({ src, fallback }: { src?: string | null; fallback: string }) => (
+const Avatar = ({ src, fallback, lightning }: { src?: string | null; fallback: string; lightning?: boolean }) => (
   <span className="grid h-12 w-12 place-items-center overflow-hidden rounded-full bg-secondary/70 text-lg text-primary shrink-0">
-    {src ? (
+    {lightning ? (
+      <BoltIcon className="h-6 w-6" />
+    ) : src ? (
       src.startsWith("http") ? (
         <img src={src} alt="" className="h-full w-full object-cover" />
       ) : (
@@ -165,14 +168,15 @@ function isPlaying(f: Friend) {
 
 const FriendCard = ({ f }: { f: Friend }) => {
   const playing = isPlaying(f);
-  const fallback = f.id === LIGHTNING_ID ? "⚡" : f.display_name.charAt(0).toUpperCase();
+  const isLightning = f.id === LIGHTNING_ID;
+  const fallback = f.display_name.charAt(0).toUpperCase();
   return (
     <Link
       to={`/messages?user=${f.id}`}
       className="group flex items-center gap-3 rounded-2xl border border-border bg-card/40 p-4 backdrop-blur transition-colors hover:border-primary/40 hover:bg-card/60"
     >
       <div className="relative">
-        <Avatar src={f.avatar || (f.id === LIGHTNING_ID ? "⚡" : null)} fallback={fallback} />
+        <Avatar src={f.avatar} fallback={fallback} lightning={isLightning} />
         {playing && (
           <span className="absolute -bottom-0.5 -right-0.5 grid h-4 w-4 place-items-center rounded-full border-2 border-card bg-emerald-500">
             <span className="h-1.5 w-1.5 rounded-full bg-white" />
