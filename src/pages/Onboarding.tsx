@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Zap } from "lucide-react";
+import { BoltIcon } from "@/components/lightning/BoltIcon";
 import { useAuth } from "@/hooks/useAuth";
 import { getLiveConfig } from "@/lib/lightning";
 import { applyColorTheme, saveColorTheme } from "@/lib/themes";
@@ -27,7 +27,7 @@ const Shell = ({ children }: { children: React.ReactNode }) => (
     <div className="min-h-screen w-full grid place-items-center px-6">
       <div className="w-full max-w-xl text-center">
         <div className="mx-auto mb-6 grid h-12 w-12 place-items-center text-foreground">
-          <Zap className="h-9 w-9 fill-current" />
+          <BoltIcon className="h-9 w-9" />
         </div>
         {children}
       </div>
@@ -128,7 +128,7 @@ export const Onboarding = ({ onDone }: { onDone: () => void }) => {
       </div>
       <div className="mt-6 grid grid-cols-2 gap-3">
         {mode === "signup" && (
-          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" className="col-span-1 rounded-full bg-secondary/80 px-5 py-3 text-sm text-foreground placeholder:text-foreground/50 outline-none" />
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Display Name" className="col-span-1 rounded-full bg-secondary/80 px-5 py-3 text-sm text-foreground placeholder:text-foreground/50 outline-none" />
         )}
         <input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" className={`${mode === "signup" ? "col-span-1" : "col-span-2"} rounded-full bg-secondary/80 px-5 py-3 text-sm text-foreground placeholder:text-foreground/50 outline-none`} />
         <input type="password" value={pw} onChange={(e) => setPw(e.target.value)} placeholder="Password" className="col-span-2 rounded-full bg-secondary/80 px-5 py-3 text-sm text-foreground placeholder:text-foreground/50 outline-none" />
@@ -205,7 +205,7 @@ export const Onboarding = ({ onDone }: { onDone: () => void }) => {
         <svg viewBox="0 0 24 24" className="h-16 w-16 fill-current"><path d="M12 12a5 5 0 100-10 5 5 0 000 10zm-8 10a8 8 0 1116 0H4z"/></svg>
       </div>
       <h2 className="mt-4 text-3xl md:text-4xl font-bold text-foreground">
-        Ready to explore, {name || "friend"}?
+        Ready to explore, {name || (auth?.profile?.display_name) || (auth?.profile?.username) || username || "friend"}?
       </h2>
       <div className="mt-10"><Pill onClick={() => setStep(5)}>Done</Pill></div>
     </Shell>
