@@ -11,7 +11,16 @@ export function getLiveConfig(): LightningConfig {
     const raw = localStorage.getItem(CACHE_KEY) ?? localStorage.getItem(STORAGE_KEY);
     if (!raw) return baseConfig;
     const overrides = JSON.parse(raw) as Partial<LightningConfig>;
-    return { ...baseConfig, ...overrides };
+    const merged: LightningConfig = { ...baseConfig, ...overrides };
+    // Always union nav from the base config so newly-added routes
+    // (like /friends) show up even if the cloud override predates them.
+    const seen = new Set<string>();
+    merged.nav = [...(overrides.nav ?? []), ...baseConfig.nav].filter((n) => {
+      if (seen.has(n.to)) return false;
+      seen.add(n.to);
+      return true;
+    });
+    return merged;
   } catch {
     return baseConfig;
   }
