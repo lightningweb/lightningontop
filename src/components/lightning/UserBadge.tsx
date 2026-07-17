@@ -1,4 +1,4 @@
-import { Zap } from "lucide-react";
+import { BoltIcon } from "@/components/lightning/BoltIcon";
 
 const LIGHTNING_ID = "11111111-1111-1111-1111-111111111111";
 
@@ -32,7 +32,7 @@ export const UserName = ({
   const effectiveTag = tag || (isLightning ? "STAFF" : null);
   return (
     <span className={`inline-flex items-center gap-1.5 ${className}`}>
-      {isLightning && <Zap className="h-3 w-3 text-primary" />}
+      {isLightning && <BoltIcon className="h-3 w-3 text-primary" />}
       <span className="truncate">{name}</span>
       <UserTag tag={effectiveTag} />
       {showAt && username && (

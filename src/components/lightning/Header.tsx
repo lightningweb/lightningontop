@@ -1,6 +1,7 @@
 import { NavLink, Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Menu, Home, Gamepad2, Boxes, Settings as SettingsIcon, ShieldCheck, Link as LinkIcon, User, LogOut, MessageCircle, Trophy, Target, Users, Wrench } from "lucide-react";
+import { BoltIcon } from "@/components/lightning/BoltIcon";
 import { useAuth } from "@/hooks/useAuth";
 import { NotificationsBell } from "./NotificationsBell";
 import { levelForXp } from "@/lib/level";
@@ -63,7 +64,7 @@ export const Header = ({
   <header className="flex items-center justify-between gap-6">
     <Link to="/" className="group flex items-center gap-2.5">
       <span className="grid h-9 w-9 place-items-center text-foreground transition-transform group-hover:scale-110">
-        <svg viewBox="0 0 24 24" className="h-6 w-6 fill-current"><path d="M13 2L3 14h7l-1 8 11-14h-7l1-6z"/></svg>
+        <BoltIcon className="h-6 w-6" />
       </span>
       <span className="hidden sm:inline text-sm font-bold tracking-tight text-foreground">{siteName}</span>
       {version && (

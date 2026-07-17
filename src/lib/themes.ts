@@ -37,7 +37,16 @@ export function applyColorTheme(id: string) {
   const t = COLOR_THEMES.find((x) => x.id === id) ?? COLOR_THEMES[0];
   const root = document.documentElement;
   const hsl = `${t.hue} ${t.sat}% ${t.light}%`;
+  // Use the picked color as the app-wide primary so buttons, links, pills,
+  // and highlights all reflect it. Choose a readable foreground based on
+  // the color's lightness.
+  const fgL = t.light > 62 ? 12 : 100;
+  const fg = `${t.hue} 15% ${fgL}%`;
+  root.style.setProperty("--primary", hsl);
+  root.style.setProperty("--primary-foreground", fg);
   root.style.setProperty("--accent", hsl);
+  root.style.setProperty("--accent-foreground", fg);
   root.style.setProperty("--ring", hsl);
+  root.style.setProperty("--glow", hsl);
   root.dataset.colorTheme = t.id;
 }
