@@ -4,7 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Header } from "@/components/lightning/Header";
 import { getLiveConfig } from "@/lib/lightning";
-import { Send, UserPlus, X, Zap, Check, Inbox } from "lucide-react";
+import { Send, UserPlus, X, Check, Inbox } from "lucide-react";
+import { BoltIcon } from "@/components/lightning/BoltIcon";
 import { toast } from "@/hooks/use-toast";
 import { UserTag } from "@/components/lightning/UserBadge";
 import { bumpQuest } from "@/lib/quests";
@@ -359,7 +360,7 @@ const Messages = () => {
                           <span>{f.avatar}</span>
                         )
                       ) : f.id === LIGHTNING_ID ? (
-                        <Zap className="h-3.5 w-3.5" />
+                        <BoltIcon className="h-3.5 w-3.5" />
                       ) : (
                         f.display_name.charAt(0).toUpperCase()
                       )}
@@ -401,7 +402,7 @@ const Messages = () => {
                           <span>{activeFriend.avatar}</span>
                         )
                       ) : activeFriend.id === LIGHTNING_ID ? (
-                        <Zap className="h-4 w-4" />
+                        <BoltIcon className="h-4 w-4" />
                       ) : (
                         activeFriend.display_name.charAt(0).toUpperCase()
                       )}
